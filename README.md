@@ -45,7 +45,7 @@ This is an example of what is expected, each field is described below:
 *   **date** The date, can be exact or aproximate.
 
 
-The previous fileds can be empty, but the more the richer will be the descritor's output :)
+The previous fileds are string type and can be empty, but the less empty ones the richer will be the descriptor's output :)
 
 ### Expected Output
 
