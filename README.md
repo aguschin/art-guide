@@ -20,6 +20,7 @@ For the input the model expect the folllowing dictionary/json:
     'style': ''Renaissance',
     'objects': ['painting', 'Oil Paint'],
     'period': 'Renaissance',
+    'date': '1503'
 }
 ```
 
