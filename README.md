@@ -1,6 +1,23 @@
 # art-guide
 Your guide in the world of art
 
+## Environment
+
+1. Create the environment file (on a `.env` file by using `.env.example` as template).
+2. Set your own keys (telegram token).
+3. Install the dependencies with pip.
+```shell
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Use the bot
+
+Run the bot with the following command:
+```shell
+python -m bot.py
+```
 
 ## Description Generator Module
 
