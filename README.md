@@ -17,7 +17,7 @@ pip install -r requirements.txt
 Run the bot with the following command:
 ```shell
 python -m bot.py
-``` 
+```
 
 ## Description Generator Module
 
