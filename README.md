@@ -12,12 +12,12 @@ Your guide in the world of art
 
 For the input the model expect the folllowing dictionary/json:
 
-```json
+```python
 {
     'author_name': 'Leonardo da Vinci',
     'art_name': 'Mona Lisa'
     'type': 'painting'
-    'style': ''Renaissance',
+    'style': 'Renaissance',
     'objects': ['painting', 'Oil Paint'],
     'period': 'Renaissance',
     'date': '1503'
@@ -26,7 +26,7 @@ For the input the model expect the folllowing dictionary/json:
 
 ### Expected Output
 
-```json
+```python
 {
     'description': 'some text'
 }
