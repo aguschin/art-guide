@@ -1,5 +1,5 @@
 from copy import copy
-from manual_engine import manual_generation
+from .manual_engine import manual_generation
 
 INPUT_FORMAT = {
     'author_name': '',
