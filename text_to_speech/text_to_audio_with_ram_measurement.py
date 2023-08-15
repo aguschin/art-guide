@@ -14,15 +14,16 @@ def text_to_audio(text, language='en', slow=False, filename="output.mp3"):
         slow (bool): Whether the audio should be slow (default is False).
         filename (str): Name of the output audio file (default is "output.mp3").
     """
-    # Get the current time before creating the audio
-    start_time = time.time()
+
 
     # Get the current RAM usage before creating the audio
     initial_ram_usage = psutil.virtual_memory().used
 
+    # Get the current time before creating the audio
+    start_time = time.time()
+
     audio_converter = gTTS(text=text, lang=language, slow=slow)
     audio_converter.save(filename)
-    os.system(f"mpg321 {filename}")
 
     # Calculate runtime
     end_time = time.time()
@@ -41,6 +42,6 @@ def text_to_audio(text, language='en', slow=False, filename="output.mp3"):
     return Audio(filename)
 
 # Example usage
-mytext = 'Welcome to Habour.Space Project!'
+mytext = 'Welcome to Habour Space Project!' * 20
 audio_output = text_to_audio(mytext, slow=False, filename="welcome.mp3")
-audio_output
+

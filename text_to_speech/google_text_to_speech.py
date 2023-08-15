@@ -14,10 +14,8 @@ def text_to_audio(text, language='en', slow=False, filename="output.mp3"):
     """
     audio_converter = gTTS(text=text, lang=language, slow=slow)
     audio_converter.save(filename)
-    os.system(f"mpg321 {filename}")
     return Audio(filename)
 
 # Example usage
 mytext = 'Welcome to Habour.Space Project!'
 audio_output = text_to_audio(mytext, slow=False, filename="welcome.mp3")
-audio_output
