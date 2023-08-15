@@ -1,5 +1,5 @@
 from copy import copy
-from manual_engyne import manual_generation
+from .manual_engine import manual_generation
 
 INPUT_FORMAT = {
     'author_name': '',
@@ -12,15 +12,15 @@ INPUT_FORMAT = {
 }
 
 
-def describe(feature_dict: dict, engyne: str = 'manual'):
+def describe(feature_dict: dict, engine: str = 'manual'):
     input_features = copy(INPUT_FORMAT)
     input_features.update(feature_dict)
 
     output = ''
 
-    if engyne == 'manual':
+    if engine == 'manual':
         output = manual_generation(input_features)
     else:
-        assert False, f'engyne value {engyne} not found'
+        assert False, f'engine value {engine} not found'
 
     return {'description': output}
