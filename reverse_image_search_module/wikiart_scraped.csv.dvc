@@ -1,0 +1,5 @@
+outs:
+- md5: 1899dfde0fdb54e11f6744a95d8025a3
+  size: 18332279
+  hash: md5
+  path: wikiart_scraped.csv
