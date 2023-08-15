@@ -1,0 +1,3 @@
+/all_embeddings.npy
+/wikiart_scraped.csv
+/calculate_embedding_cosine_similarity.ipynb
