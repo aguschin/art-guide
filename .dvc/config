@@ -1,4 +1,4 @@
 [core]
     remote = myremote
 ['remote "myremote"']
-    url = ssh://root2222/storage
+    url = ssh://root@95.143.191.156:22/storage
