@@ -1,47 +1,53 @@
-from io import BytesIO
+import asyncio
+import os
 
-import requests
-import telebot
+from telebot.async_telebot import AsyncTeleBot
 from decouple import config
-from matplotlib import pyplot as plt
+
+from descriptor_module.descriptor import describe
+from text2speech_module.google_text_to_speech import text_to_audio
 
 TELEGRAM_TOKEN = config("TELEGRAM_TOKEN")
-bot = telebot.TeleBot(token=TELEGRAM_TOKEN)
+bot = AsyncTeleBot(token=TELEGRAM_TOKEN)
 
 
 @bot.message_handler(commands=['start', 'help'])
-def send_welcome(message):
-    text = """Hi. This bot will accept an image of a painting and it will send you back an audio and text with a
-        description of it, talking about its name, author, date, etc.\n\
+async def send_welcome(message):
+    text = \
+"""
+    Hi. This bot will accept an image of a painting and it will send you back an audio and text with a description of it, talking about its name, author, date, etc.\n\
+    
+    To use it, just upload an image and you will receive the audio and text.\n\
+"""
 
-        To use it, just upload an image and you will receive the audio and text.\n\
-        """
-
-    bot.reply_to(message, text)
+    await bot.reply_to(message, text)
 
 
 @bot.message_handler(content_types=['photo'])
-def handle_image(message):
+async def handle_image(message):
     image = message.photo[-1]
 
-    try:
-        file_id = image.file_id
-        file_info = bot.get_file(file_id)
-        file_link = f"https://api.telegram.org/file/bot{bot.token}/{file_info.file_path}"
-        response = requests.get(file_link)
-    except:
-        print("Error fetching the image.")
+    filename = str(message.chat.username) + "_" + str(message.chat.id) + "_" + str(message.id) + ".mp3"
 
-    try:
-        image = BytesIO(response.content)
-        img = plt.imread(image, format="auto")
-        plt.imshow(img)
-        plt.axis('off')
-        plt.show()
-    except:
-        print("Error plotting the image.")
+    await bot.send_message(message.chat.id, "Image received. Processing...")
 
-    bot.send_message(message.chat.id, "Image received. Processing...")
+    description_text = describe(
+        {
+            'author_name': 'Leonardo Da Vinci',
+            'art_name': 'La Gioconda',
+            'type': 'portrait',
+            'style': 'Renaissance',
+            'objects': [],
+            'period': '',
+            'date': ''
+        }
+    )['description']
+
+    text_to_audio(description_text, filename=filename)
+    audio = open(filename, 'rb')
+    await bot.send_audio(message.chat.id, audio)
+    audio.close()
+    os.system(f"rm {filename}")
 
 
-bot.infinity_polling()
+asyncio.run(bot.infinity_polling())
