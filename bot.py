@@ -5,7 +5,7 @@ from telebot.async_telebot import AsyncTeleBot
 from decouple import config
 
 from descriptor_module.descriptor import describe
-from text_to_speech.google_text_to_speech import text_to_audio
+from text2speech_module.google_text_to_speech import text_to_audio
 
 TELEGRAM_TOKEN = config("TELEGRAM_TOKEN")
 bot = AsyncTeleBot(token=TELEGRAM_TOKEN)
