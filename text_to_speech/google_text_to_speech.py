@@ -2,7 +2,7 @@ import os
 from gtts import gTTS
 from IPython.display import Audio
 
-def text_to_audio(text, language='en', slow=False, filename="output.mp3"):
+async def text_to_audio(text, language='en', slow=False, filename="output.mp3"):
     """
     Convert a given text to audio and save it to a file.
 
@@ -13,7 +13,7 @@ def text_to_audio(text, language='en', slow=False, filename="output.mp3"):
         filename (str): Name of the output audio file (default is "output.mp3").
     """
     audio_converter = gTTS(text=text, lang=language, slow=slow)
-    audio_converter.save(filename)
+    await audio_converter.save(filename)
     return Audio(filename)
 
 # Example usage
