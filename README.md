@@ -41,8 +41,8 @@ For the input the model expect the folllowing dictionary/json:
 ```python
 {
     'author_name': 'Leonardo da Vinci',
-    'art_name': 'Mona Lisa'
-    'type': 'painting'
+    'art_name': 'Mona Lisa',
+    'type': 'painting',
     'style': 'Renaissance',
     'objects': ['painting', 'Oil Paint'],
     'period': 'Renaissance',

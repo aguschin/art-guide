@@ -33,13 +33,13 @@ async def handle_image(message):
 
     description_text = describe(
         {
-            'author_name': 'Leonardo Da Vinci',
-            'art_name': 'La Gioconda',
-            'type': 'portrait',
+            'author_name': 'Leonardo da Vinci',
+            'art_name': 'Mona Lisa',
+            'type': 'painting',
             'style': 'Renaissance',
-            'objects': [],
-            'period': '',
-            'date': ''
+            'objects': ['painting', 'Oil Paint'],
+            'period': 'Renaissance',
+            'date': '1503'
         }
     )['description']
 
