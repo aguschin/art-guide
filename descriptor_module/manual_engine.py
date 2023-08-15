@@ -7,22 +7,21 @@ def manual_generation(inputd: dict):
     author = author if author != '' else 'some artist'
 
     types = inputd['type']
-    name = f'{types} is called {name}' if types != '' else f'is {name}'
+    types = types if types != '' else 'artwork'
 
     style = inputd['style']
-    style = f'It follows the {style} style. ' if style != '' else ''
+    style = f'Falls under the {style} style. ' if style != '' else ''
 
     date = inputd['date']
-    date = f', {date}' if date != '' else ''
+    date = f', in {date}' if date != '' else ''
 
     period = inputd['period']
-    period = f' in the {period}' if period != '' else ''
+    period = f' during the {period} art period' if period != '' else ''
 
     objects = inputd['objects']
-    objects = 'It contains ' + ', '.join(objects) if len(objects) > 0 else ''
+    objects = f'This {types} features ' + \
+              ', '.join(objects) if len(objects) > 0 else ''
 
-    ouput = f"""
-        This {name}, created by {author}{period}{date}. {style}{objects}
-    """
+    ouput = f"""The artwork {name}, was created by {author}{period}{date}. {style}{objects}"""
 
     return ouput
