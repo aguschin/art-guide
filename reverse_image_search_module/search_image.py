@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 # Load all embeddings from the .npy file
-all_embeddings = np.load('./reverse_image_search_module/all_embeddings.npy')
+all_embeddings = np.load('./data/all_embeddings.npy')
 embedding_dim = all_embeddings.shape[1]
 
 # Build Annoy index
@@ -16,8 +16,8 @@ for idx, vec in enumerate(all_embeddings):
 
 num_trees = 50
 annoy_index.build(num_trees)
-dataset = pd.read_csv('./reverse_image_search_module/wikiart_scraped.csv')
 
+dataset = pd.read_csv('./data/wikiart_scraped.csv')
 
 def change_format(data):
     return {
