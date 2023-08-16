@@ -10,7 +10,7 @@ all_embeddings = np.load('./data/all_embeddings.npy')
 embedding_dim = all_embeddings.shape[1]
 
 # Build Annoy index
-annoy_index = AnnoyIndex(embedding_dim, metric='dot') # using dot, while assuming the vectors are normalized
+annoy_index = AnnoyIndex(embedding_dim, metric='dot')  # using dot, while assuming the vectors are normalized
 for idx, vec in enumerate(all_embeddings):
     vec = vec / np.linalg.norm(vec)
     annoy_index.add_item(idx, vec)
@@ -20,12 +20,27 @@ annoy_index.build(num_trees)
 
 dataset = pd.read_csv('./data/wikiart_scraped.csv')
 
+
 def change_format(data):
     return {
-        'author_name': data['Artist'],
-        'art_name': data['Artwork'],
-        'style': data['Style'],
-        'date': data['Date']
+        'author_name': data['Author'],
+        # 'art_name': data['Artwork'],
+        'style': data['Styles'],
+        'date': data['Date'],
+        'id': data['Id'],
+        'url': data['URL'],
+        'title': data['Title'],
+        'original_title': data['OriginalTitle'],
+        'series': data['Series'],
+        'genre': data['Genre'],
+        'media': data['Media'],
+        'location': data['Location'],
+        'dimention': data['Dimentions'],
+        'description': data['WikiDescription'],
+        'tags': data['Tags'],
+        'image': data['img'],
+        'image_url': data['image_urls']
+
     }
 
 
@@ -40,5 +55,3 @@ def find_image(img):
     data = change_format(dataset.iloc[idx].to_dict())
 
     return idx, dist, data
-
-
