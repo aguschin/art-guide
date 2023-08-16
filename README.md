@@ -5,17 +5,18 @@ Your guide in the world of art
 
 1. Create the environment file (on a `.env` file by using `.env.example` as template).
 2. Set your own keys (telegram token).
-
-### Build the Docker image
-
+3. Install the dependencies with pip.
 ```shell
-docker build -t art-guide-tg-bot .
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-### Run the docker image
+## Use the bot
 
+Run the bot with the following command:
 ```shell
-docker run art-guide-tg-bot
+python -m bot.py
 ```
 
 ## Description Generator Module

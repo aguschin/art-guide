@@ -1,7 +1,9 @@
+import psutil
 from gtts import gTTS
+import time
 
 
-def text_to_audio(text, language='en', slow=False, filename="output.mp3"):
+def text_to_audio(text, language='en', slow=False, filename="output.mp3", measure_performance = False):
     """
     Convert a given text to audio and save it to a file.
 
