@@ -18,20 +18,27 @@ docker build -t art-guide-tg-bot .
 docker run art-guide-tg-bot
 ```
 
-## Description Generator Module
-
-### How to use it
+### How to use the modules
 
 ```python
 from descriptor_module import descriptor
+from image_crop_module import croper
 
 ...
-# features_dict its a dict with the fields described below
 
+image = Image.open(path)
+
+# input: Pilow image, output: np.array
+image_croped = croper.crop_image(image)
+
+...
 description = descriptor.describe(features_dict)
 
 print(description)
 ```
+
+## Description Generator Module
+
 
 ### Expected Input
 
