@@ -1,0 +1,5 @@
+[core]
+    remote = myremote
+    autostage = true
+['remote "myremote"']
+    url = ssh://root@95.143.191.156:22/storage
