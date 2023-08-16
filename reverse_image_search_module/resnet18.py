@@ -38,5 +38,4 @@ class Img2VecResnet18():
         vec = self.getVec(img)
         return vec / np.linalg.norm(vec)
 
-
 img2vec = Img2VecResnet18()

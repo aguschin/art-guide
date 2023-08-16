@@ -17,8 +17,8 @@ for idx, vec in enumerate(all_embeddings):
 
 num_trees = 50
 annoy_index.build(num_trees)
-dataset = pd.read_csv('./data/wikiart_scraped.csv')
 
+dataset = pd.read_csv('./data/wikiart_scraped.csv')
 
 def change_format(data):
     return {
