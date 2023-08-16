@@ -1,15 +1,8 @@
 import os
-
 import requests
-from PIL import Image
 
 from telebot import TeleBot
 from decouple import config
-
-from descriptor_module.descriptor import describe
-from text2speech_module.google_text_to_speech import text_to_audio
-
-from reverse_image_search_module.search_image import find_image
 
 TELEGRAM_TOKEN = config("TELEGRAM_TOKEN")
 bot = TeleBot(token=TELEGRAM_TOKEN)
@@ -38,23 +31,24 @@ def handle_image(message):
     photo_url = f"https://api.telegram.org/file/bot{TELEGRAM_TOKEN}/{file_info.file_path}"
     print("URL:", photo_url)
 
-    image = Image.open(requests.get(photo_url, stream=True).raw)
+    filename = str(message.chat.username) + "_" + str(message.chat.id) + "_" + str(message.id) + ".mp3"
 
-    _, distance, metadata = find_image(image)
+    response = requests.get("http://localhost:8000/process_image/", json={'filename': filename, 'photo_url': photo_url})
 
-    print("Distance:", distance)
-
-    if distance < 0.9:
-        bot.send_message(message.chat.id, "Sorry, I couldn't find a match for that image.")
+    if response.json().get('error'):
+        print("Error:", response.json().get('error'))
+        bot.send_message(message.chat.id, response.json().get('error'))
         return
 
-    description_text = describe(metadata)['description']
-
-    filename = str(message.chat.username) + "_" + str(message.chat.id) + "_" + str(message.id) + ".mp3"
-    text_to_audio(description_text, filename=filename)
-    audio = open(filename, 'rb')
-    bot.send_audio(message.chat.id, audio)
-    audio.close()
-    os.system(f"rm {filename}")
+    if response.status_code == 200:
+        filename = response.json().get('audio_filename')
+        audio = open(filename, 'rb')
+        bot.send_audio(message.chat.id, audio)
+        audio.close()
+        os.system(f"rm {filename}")
+    else:
+        print(response.content)
+        print("Error calling API.")
+    
 
 bot.infinity_polling()
