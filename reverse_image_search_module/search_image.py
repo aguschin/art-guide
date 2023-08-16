@@ -12,6 +12,7 @@ embedding_dim = all_embeddings.shape[1]
 # Build Annoy index
 annoy_index = AnnoyIndex(embedding_dim, metric='dot') # using dot, while assuming the vectors are normalized
 for idx, vec in enumerate(all_embeddings):
+    vec = vec / np.linalg.norm(vec)
     annoy_index.add_item(idx, vec)
 
 num_trees = 50
@@ -33,7 +34,7 @@ def find_image(img):
     plt.imshow(img)
     plt.show()
 
-    vector = img2vec.getVec(img)
+    vector = img2vec.getNormalizedVec(img)
     idx, dist = annoy_index.get_nns_by_vector(vector, 1, search_k=-1, include_distances=True)
     idx, dist = idx[0], dist[0]
     data = change_format(dataset.iloc[idx].to_dict())

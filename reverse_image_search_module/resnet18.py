@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 from torchvision import transforms
 import torchvision
@@ -32,6 +33,10 @@ class Img2VecResnet18():
         self.model(image)
         h.remove()
         return embedding.numpy()[0, :, 0, 0]
+
+    def getNormalizedVec(self, img):
+        vec = self.getVec(img)
+        return vec / np.linalg.norm(vec)
 
 
 img2vec = Img2VecResnet18()
