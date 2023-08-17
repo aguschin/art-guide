@@ -13,6 +13,7 @@ fastapi==0.101.1
 fonttools==4.42.0
 frozenlist==1.4.0
 gTTS==2.3.2
+gunicorn==21.2.0
 idna==3.4
 importlib-resources==6.0.1
 kiwisolver==1.4.4
@@ -34,8 +35,6 @@ uvicorn==0.23.2
 yarg==0.1.9
 yarl==1.9.2
 zipp==3.16.2
-psutil~=5.9.5
-gTTS~=2.3.2
 torch~=2.0.1
 torchvision~=0.15.2
 pandas~=2.0.3
