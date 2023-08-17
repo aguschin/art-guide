@@ -1,5 +1,12 @@
 ## Description Generator Module
 
+This module was designed with two strategies in mind:
+
+*   Use the input and manually return a response only by filling in a template with the values.
+
+*   Use a transformer to create a text given the input in such a way that it sounds human.
+
+The second one will be left for future work since for the moment, the input is too small and a generative or summary model is not necessary.
 
 ### Expected Input
 
