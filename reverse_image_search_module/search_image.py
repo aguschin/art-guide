@@ -11,6 +11,7 @@ embedding_dim = all_embeddings.shape[1]
 
 # Build Annoy index
 annoy_index = AnnoyIndex(embedding_dim, metric='dot')  # using dot, while assuming the vectors are normalized
+
 for idx, vec in enumerate(all_embeddings):
     vec = vec / np.linalg.norm(vec)
     annoy_index.add_item(idx, vec)
@@ -40,12 +41,10 @@ def change_format(data):
         'tags': data['Tags'],
         'image': data['img'],
         'image_url': data['image_urls']
-
     }
 
 
 def find_image(img):
-    print("Image\n", img)
     plt.imshow(img)
     plt.show()
 

@@ -23,6 +23,7 @@ class Img2VecResnet18():
 
         return cnnModel, layer
 
+
     def preprocess_image(self, image):
         transformationForCNNInput = transforms.Compose([transforms.Resize((224,224))])
         image = transformationForCNNInput(image)
@@ -34,9 +35,11 @@ class Img2VecResnet18():
         embedding = torch.zeros(self.batch_size, self.numberFeatures, 1, 1)
         def copyData(m, i, o):
             embedding.copy_(o.data)
+
         h = self.featureLayer.register_forward_hook(copyData)
         self.model(images)
         h.remove()
         return embedding.numpy()[:, :, 0, 0]
+
 
 img2vec = Img2VecResnet18(batch_size=1)
