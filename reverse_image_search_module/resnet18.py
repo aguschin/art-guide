@@ -13,6 +13,7 @@ class Img2VecResnet18():
         self.model, self.featureLayer = self.getFeatureLayer()
         self.model = self.model.to(self.device)
         self.model.eval()
+        self.toTensor = transforms.ToTensor()
         self.normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         self.batch_size = batch_size
 
@@ -23,11 +24,12 @@ class Img2VecResnet18():
 
         return cnnModel, layer
 
-
     def preprocess_image(self, image):
-        transformationForCNNInput = transforms.Compose([transforms.Resize((224,224))])
+        transformationForCNNInput = transforms.Compose([transforms.Resize((224, 224))])
         image = transformationForCNNInput(image)
-        return self.normalize(self.toTensor(image)).unsqueeze(0).to(self.device)
+        if type(image) != torch.Tensor:
+            image = self.toTensor(image)
+        return self.normalize(image).unsqueeze(0).to(self.device)
 
     def getVectors(self, images):
         images = self.preprocess_image(images)
@@ -40,6 +42,5 @@ class Img2VecResnet18():
         self.model(images)
         h.remove()
         return embedding.numpy()[:, :, 0, 0]
-
 
 img2vec = Img2VecResnet18(batch_size=1)
