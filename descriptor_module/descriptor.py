@@ -2,13 +2,28 @@ from copy import copy
 from .manual_engine import manual_generation
 
 INPUT_FORMAT = {
-    'author_name': '',
+    'artists_name': '',
     'art_name': '',
-    'type': '',
+    'Dimensions': '',
     'style': '',
     'objects': [],
     'period': '',
-    'date': ''
+    'date': '',
+    'Genre':'', 
+    'Series':'',
+    'OriginalTitle':'',
+    #----------artist info
+    'ArtMovements':'', 
+    'BirthDate':'',
+    'BirthPlace':'',
+    'DeathPlace':'',
+    'DeathDate' :'' , 
+    'Fields':'',
+    'Genres':'',  
+    'Nationality':'',
+    'ArtInstitutions' :'',
+    'OriginalName':'',
+    'InfluencedBy': ''
 }
 
 
