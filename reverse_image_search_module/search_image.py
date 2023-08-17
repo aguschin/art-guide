@@ -24,23 +24,10 @@ dataset = pd.read_csv('./data/wikiart_scraped.csv')
 
 def change_format(data):
     return {
-        'author_name': data['Author'],
-        # 'art_name': data['Artwork'],
-        'style': data['Styles'],
-        'date': data['Date'],
-        'id': data['Id'],
-        'url': data['URL'],
-        'title': data['Title'],
-        'original_title': data['OriginalTitle'],
-        'series': data['Series'],
-        'genre': data['Genre'],
-        'media': data['Media'],
-        'location': data['Location'],
-        'dimention': data['Dimentions'],
-        'description': data['WikiDescription'],
-        'tags': data['Tags'],
-        'image': data['img'],
-        'image_url': data['image_urls']
+        'author_name': data['Artist'],
+        'art_name': data['Artwork'],
+        'style': data['Style'],
+        'date': data['Date']
     }
 
 
