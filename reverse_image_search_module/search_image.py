@@ -1,3 +1,4 @@
+import torch
 from annoy import AnnoyIndex
 from matplotlib import pyplot as plt
 
@@ -48,10 +49,10 @@ def find_image(img):
     plt.imshow(img)
     plt.show()
 
-    # img = img2vec.preprocess_image(img)
-    vec = img2vec.getVectors(img)
-    # vector = img2vec.getNormalizedVec(img)
-    vector = vec / np.linalg.norm(vec)
+    transposed_img = torch.from_numpy(np.transpose(img, (2, 0, 1)))
+    vector = img2vec.getVectors(transposed_img)
+    vector = np.transpose(vector)
+    vector = vector / np.linalg.norm(vector)
 
     idx, dist = annoy_index.get_nns_by_vector(vector, 1, search_k=-1, include_distances=True)
     idx, dist = idx[0], dist[0]
