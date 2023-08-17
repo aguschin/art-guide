@@ -52,7 +52,10 @@ def crop_image(image):
     mask = (mask == painting_id) + (mask == pot_id) + (mask == sculpture_id)
     mask = (mask == 1).numpy()
 
-    mask = cv2.resize(mask.astype(float), (W, H))
+    kernel = np.ones((3, 3), np.uint8)
+    mask = cv2.erode(mask.astype(float), kernel, cv2.BORDER_REFLECT)
+
+    mask = cv2.resize(mask, (W, H))
 
     image_np = min_max(np.array(image))
 
@@ -79,4 +82,3 @@ def crop_image(image):
     croped = image_np[y:y+height, x:x+width]
 
     return croped.astype(np.float32)
-
