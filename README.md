@@ -41,7 +41,7 @@ print(description)
 
 This repository contains the source code and configuration for automating the Continuous Integration and Continuous Deployment (CI/CD) process using GitHub Actions. The workflow is designed to build and deploy a Docker image of my project whenever changes are pushed to the `main` branch.
 
-For more information read the [CI-CD README.md](.github/README.md) file in the `.github` folder.
+For more information read the [CI-CD README.md](.github/workflows/README.md) file in the `.github` folder.
 
 ## Description Generator Module
 
