@@ -24,7 +24,7 @@ class Img2VecResnet18():
         return cnnModel, layer
 
     def getVec(self, img):
-        image = self.normalize(self.toTensor(img)).unsqueeze(0).to(self.device)
+        image = self.normalize(self.toTensor(img)).unsqueeze(0).to(torch.float32).to(self.device)
         embedding = torch.zeros(1, self.numberFeatures, 1, 1)
 
         def copyData(m, i, o): embedding.copy_(o.data)
@@ -37,5 +37,6 @@ class Img2VecResnet18():
     def getNormalizedVec(self, img):
         vec = self.getVec(img)
         return vec / np.linalg.norm(vec)
+
 
 img2vec = Img2VecResnet18()
