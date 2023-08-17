@@ -26,7 +26,6 @@ dataset = pd.read_csv('./data/data.csv')
 def change_format(data):
     return {
         'author_name': data['Author'],
-        # 'art_name': data['Artwork'],
         'style': data['Styles'],
         'date': data['Date'],
         'id': data['Id'],
@@ -37,10 +36,9 @@ def change_format(data):
         'genre': data['Genre'],
         'media': data['Media'],
         'location': data['Location'],
-        'dimention': data['Dimentions'],
+        'dimension': data['Dimensions'],
         'description': data['WikiDescription'],
         'tags': data['Tags'],
-        'image': data['img'],
         'image_url': data['image_urls']
     }
 
