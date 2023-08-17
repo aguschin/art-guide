@@ -42,10 +42,10 @@ An erosion operation was used to separate the components before the centroids ca
 The segmentation module will need to be improved in the future. The current one does not detect some objects in the dataset such as vessels or art.
 
 <p align="center">
-  <img src="images/i5.png" alt="Imagen de muestra">
-  <img src="images/i6.png" alt="Imagen de muestra">
+  <img src="images/i5.png" alt="Imagen de muestra" width="50%">
+  <img src="images/i6.png" alt="Imagen de muestra" width="50%">
 </p>
 <p align="center">
-  <img src="images/i7.png" alt="Imagen de muestra">
-  <img src="images/i8.png" alt="Imagen de muestra">
+  <img src="images/i7.png" alt="Imagen de muestra" width="50%">
+  <img src="images/i8.png" alt="Imagen de muestra" width="50%">
 </p>
