@@ -9,7 +9,7 @@ The tech-to-speech model is a specialized module designed for use within the Tel
 
 When the requested audio for the description of an image from a Telegram Bot user has been pre-generated, this route will be used. The retrieve function retrieves the audio according to the art index.
 
-We have converted part of the art descriptions in our database to audio using Bark-small, a TTS model by Suno, and saved the pre-generated audio in remote storage.
+We have converted part of the art descriptions in our database to audio using Bark-small, a TTS model by Suno AI, and saved the pre-generated audio in remote storage.
 
 ### 2. On-the-Fly Audio Generation
 #### Generate audio on-the-fly for descriptions not previously converted to audio. ####
