@@ -14,6 +14,7 @@ pandas
 matplotlib
 annoy
 
-'''
+,,,
 pip install torch torchvision numpy pandas matplotlib annoy
-'''
+
+,,,
