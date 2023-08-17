@@ -10,6 +10,7 @@ from descriptor_module.descriptor import describe
 from text2speech_module.google_text_to_speech import text_to_audio
 
 from reverse_image_search_module.search_image import find_image
+from image_crop_module.croper import crop_image
 
 TELEGRAM_TOKEN = config("TELEGRAM_TOKEN")
 bot = TeleBot(token=TELEGRAM_TOKEN)
@@ -39,8 +40,9 @@ def handle_image(message):
     print("URL:", photo_url)
 
     image = Image.open(requests.get(photo_url, stream=True).raw)
+    cropped_image = crop_image(image)
 
-    _, distance, metadata = find_image(image)
+    _, distance, metadata = find_image(cropped_image)
 
     print("Distance:", distance)
 

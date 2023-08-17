@@ -1,5 +1,5 @@
 outs:
-- md5: 1dfb6254f292b497ac472e49122c42fc
-  size: 716453
+- md5: be04f3016ece5eee3484d42dfaa9a387
+  size: 724810
   hash: md5
   path: calculate_embedding_cosine_similarity.ipynb
