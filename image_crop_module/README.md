@@ -1,6 +1,6 @@
 # Image Croper Module
 
-This module is in charge of cropping the image to the object of interest, in case it is a painting, a buckaroo or a statue. In case there is no image, it returns the image.
+This module is in charge of cropping the image to the object of interest, in this case it is a painting, a pot or a sculpture. In case there is no image, it returns the original image.
 
 
 For this, it is first preferable to use an image where the artwork is the center, as it will be used to select it:
@@ -39,7 +39,7 @@ An erosion operation was used to separate the components before the centroids ca
 
 ### Future steps and improvements
 
-The segmentation module will need to be improved in the future. The current one does not detect some objects in the dataset such as vessels or art.
+The segmentation module will need to be improved in the future. The current one does not detect some objects in the dataset such as vessels.
 
 <p align="center">
   <img src="images/i5.png" alt="Imagen de muestra">
