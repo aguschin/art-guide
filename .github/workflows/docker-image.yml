@@ -17,6 +17,11 @@ jobs:
       - name: Install ssh
         run: sudo apt-get install openssh-client
 
+      - name: Add SSH key to agent
+        uses: webfactory/ssh-agent@v0.5.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Install dvc
         run: pip install dvc
 
