@@ -46,6 +46,6 @@ The segmentation module will need to be improved in the future. The current one 
   <img src="images/i6.png" alt="Imagen de muestra">
 </p>
 <p align="center">
-  <img src="images/i7.png" alt="Imagen de muestra" width="30%">
-  <img src="images/i8.png" alt="Imagen de muestra" width="30%">
+  <img src="images/i7.png" alt="Imagen de muestra" width="40%">
+  <img src="images/i8.png" alt="Imagen de muestra" width="40%">
 </p>
