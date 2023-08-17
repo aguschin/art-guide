@@ -38,5 +38,5 @@ class Img2VecResnet18():
         self.model(images)
         h.remove()
         return embedding.numpy()[:, :, 0, 0]
-
+      
 img2vec = Img2VecResnet18(batch_size=1)

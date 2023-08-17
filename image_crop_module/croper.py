@@ -23,6 +23,8 @@ processor = SegformerImageProcessor.from_pretrained(MODEL_NAME)
 model = SegformerForSemanticSegmentation.from_pretrained(MODEL_NAME)
 
 painting_id = 22
+pot_id = 125
+sculpture_id = 132
 
 
 def min_max(image):
@@ -46,14 +48,16 @@ def crop_image(image):
     inputs = processor(images=image, return_tensors="pt")
     logits = model(**inputs).logits
 
-#    mask = logits.detach().squeeze().argmax(0)
     mask = logits.squeeze().argmax(0)
-    mask = (mask == painting_id).numpy()
+    mask = (mask == painting_id) + (mask == pot_id) + (mask == sculpture_id)
+    mask = (mask == 1).numpy()
 
-    mask = cv2.resize(mask.astype(float), (W, H))
+    kernel = np.ones((3, 3), np.uint8)
+    mask = cv2.erode(mask.astype(float), kernel, cv2.BORDER_REFLECT)
+
+    mask = cv2.resize(mask, (W, H))
 
     image_np = min_max(np.array(image))
-    image_np = image_np * mask.reshape(mask.shape[0], mask.shape[1], 1)
 
     mask = mask.astype(np.uint8)
     _, _, stats, centroids = cv2.connectedComponentsWithStats(mask)
@@ -61,10 +65,13 @@ def crop_image(image):
     stats[0, 4] = 0.0
 
     # remove the smallest clusters
-    h = stats[:, 4] > stats[:, 4].max() * 0.75
+    h = stats[:, 4] >= stats[:, 4].max() * 0.75
 
     stats = stats[h, :]
     centroids = centroids[h, :]
+
+    # if len(centroids) == 0:
+    #    return image
 
     image_center = np.array([image.width / 2, image.height / 2])
 
@@ -74,4 +81,4 @@ def crop_image(image):
     x, y, width, height, _ = stats[best_c]
     croped = image_np[y:y+height, x:x+width]
 
-    return croped
+    return croped.astype(np.float32)
