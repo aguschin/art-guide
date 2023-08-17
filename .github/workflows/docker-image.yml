@@ -7,7 +7,7 @@ on:
   # branches: [ "main" ]
 
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,6 +28,13 @@ jobs:
       - name: Install dvc-ssh
         run: pip install dvc-ssh
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Pull dvc data
         run: dvc pull data/data.csv.dvc
 
@@ -40,13 +47,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/art-guide-tg-bot:latest
 
-      # - name: Build and push
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     file: ./Dockerfile
-      #     push: true
-      #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/art-guide-tg-bot:latest
+  # missing deploy job
