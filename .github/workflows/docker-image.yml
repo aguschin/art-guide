@@ -18,9 +18,7 @@ jobs:
         run: sudo apt-get install openssh-client
 
       - name: Install dvc
-        uses: iterative/setup-dvc@v2
-        with:
-          dvc-version: "2"
+        run: pip install dvc
 
       - name: Pull dvc cache
         run: dvc pull
