@@ -19,7 +19,7 @@ for idx, vec in enumerate(all_embeddings):
 num_trees = 50
 annoy_index.build(num_trees)
 
-dataset = pd.read_csv('./data/wikiart_scraped.csv')
+dataset = pd.read_csv('./data/data.csv')
 
 
 def change_format(data):
@@ -48,7 +48,11 @@ def find_image(img):
     plt.imshow(img)
     plt.show()
 
-    vector = img2vec.getNormalizedVec(img)
+    # img = img2vec.preprocess_image(img)
+    vec = img2vec.getVectors(img)
+    # vector = img2vec.getNormalizedVec(img)
+    vector = vec / np.linalg.norm(vec)
+
     idx, dist = annoy_index.get_nns_by_vector(vector, 1, search_k=-1, include_distances=True)
     idx, dist = idx[0], dist[0]
     data = change_format(dataset.iloc[idx].to_dict())
