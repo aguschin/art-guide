@@ -20,6 +20,9 @@ jobs:
       - name: Install dvc
         run: pip install dvc
 
+      - name: Install dvc-ssh
+        run: pip install dvc-ssh
+
       - name: Pull dvc cache
         run: dvc pull
 
