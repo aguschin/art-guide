@@ -66,6 +66,9 @@ def crop_image(image):
     stats = stats[h, :]
     centroids = centroids[h, :]
 
+    if len(centroids) == 0:
+        return image
+
     image_center = np.array([image.width / 2, image.height / 2])
 
     best_c = min(enumerate(centroids),
@@ -74,4 +77,5 @@ def crop_image(image):
     x, y, width, height, _ = stats[best_c]
     croped = image_np[y:y+height, x:x+width]
 
-    return croped
+    return croped.astype(np.float32)
+
