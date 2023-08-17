@@ -1,14 +1,12 @@
 # Tech-to-Speech Module
 The tech-to-speech model is designed to transform textual descriptions of artworks into speech audio files. It offers a unique way to experience art by listening to an audio description of the piece.
 
-...
 
 ## Expected Inputs and Outputs
 
 - Input: Textual description of an art piece
 - Output: Audio file in .wav format
 
-...
 
 ## Routes
 
