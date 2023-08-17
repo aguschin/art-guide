@@ -6,8 +6,8 @@ import torchvision
 torch.manual_seed(17)
 
 class Img2VecResnet18():
-    def __init__(self):
-        self.device = torch.device("cpu")
+    def __init__(self, batch_size=64):
+        self.device = torch.device("cuda")
         self.numberFeatures = 512
         self.modelName = "resnet-18"
         self.model, self.featureLayer = self.getFeatureLayer()
@@ -15,6 +15,7 @@ class Img2VecResnet18():
         self.model.eval()
         self.toTensor = transforms.ToTensor()
         self.normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        self.batch_size = batch_size
 
     def getFeatureLayer(self):
         cnnModel = torchvision.models.resnet18(pretrained=True)
@@ -23,20 +24,23 @@ class Img2VecResnet18():
 
         return cnnModel, layer
 
-    def getVec(self, img):
-        image = self.normalize(self.toTensor(img)).unsqueeze(0).to(torch.float32).to(self.device)
-        embedding = torch.zeros(1, self.numberFeatures, 1, 1)
+    def preprocess_image(self, image):
+        transformationForCNNInput = transforms.Compose([transforms.Resize((224, 224))])
+        image = transformationForCNNInput(image)
+        if type(image) != torch.Tensor:
+            image = self.toTensor(image)
+        return self.normalize(image).unsqueeze(0).to(self.device)
 
-        def copyData(m, i, o): embedding.copy_(o.data)
+    def getVectors(self, images):
+        images = self.preprocess_image(images)
+        
+        embedding = torch.zeros(self.batch_size, self.numberFeatures, 1, 1)
+        def copyData(m, i, o):
+            embedding.copy_(o.data)
 
         h = self.featureLayer.register_forward_hook(copyData)
-        self.model(image)
+        self.model(images)
         h.remove()
-        return embedding.numpy()[0, :, 0, 0]
+        return embedding.numpy()[:, :, 0, 0]
 
-    def getNormalizedVec(self, img):
-        vec = self.getVec(img)
-        return vec / np.linalg.norm(vec)
-
-
-img2vec = Img2VecResnet18()
+img2vec = Img2VecResnet18(batch_size=1)
