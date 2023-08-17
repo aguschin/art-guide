@@ -45,7 +45,6 @@ def change_format(data):
 
 
 def find_image(img):
-    print("Image\n", img)
     plt.imshow(img)
     plt.show()
 
