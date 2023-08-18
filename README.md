@@ -50,25 +50,60 @@ You can go [here](text2speech_module/README.md) for more details about the text 
 
 ---
 
+## CI/CD
+
+This project uses GitHub Actions for CI/CD. The workflow is defined in `.github/workflows/main.yml`. The workflow is triggered on every push or merge request to the `main` branch. The workflow consists mainly in a `build` job that builds the docker image and pushes it to the GitHub Container Registry. For more information please read [CI/CD README](.github/workflows/README.md)
+
+---
 ## Setting up the project
 
+There are 3 ways to run the project:
+
+1. Run the project directly running the python file.
+2. Build the Docker image and run it.
+3. Run the docker image from the GitHub Container Registry.
+
 ### Environment
+
+For the first 2 options you need to set up the environment variables
+
 1. Create the environment file (on a `.env` file by using `.env.example` as template).
 2. Set your own keys (telegram token).
 
-### Build the Docker image
+
+### Run the project directly running the python file
+
+You need 2 concurrent terminals to run the project.
+
+##### Terminal 1 (Rest API)
+
+```shell
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+```
+
+##### Terminal 2 (Telegram Bot)
+
+
+```shell
+python3 main.py
+```
+
+
+### Build and run the Docker image
 
 ```shell
 docker build -t art-guide-tg-bot .
-```
-
-### Run the docker image
-
-```shell
 docker run art-guide-tg-bot
 ```
 
-### How to use the modules
+### Run the docker image from the GitHub Container Registry
+
+```shell
+docker pull arielxx/art-guide-tg-bot:latest
+docker run arielxx/art-guide-tg-bot:latest
+```
+---
+## How to use the modules
 
 ```python
 from descriptor_module import descriptor
