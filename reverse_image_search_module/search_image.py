@@ -6,7 +6,7 @@ from reverse_image_search_module.resnet18 import img2vec
 import numpy as np
 import pandas as pd
 
-# Load all embeddings from the .npy file
+# Load all embeddings from the .npy filessssssssssssssssssss
 all_embeddings = np.load('./data/all_embeddings.npy')
 embedding_dim = all_embeddings.shape[1]
 

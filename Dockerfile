@@ -12,8 +12,8 @@ RUN pip install -r requirements.txt
 # Copy the necessary files into the container
 COPY . /app
 
-# Install supervisor
-RUN apt-get update && apt-get install -y supervisor
+# Install libraries
+RUN apt-get update && apt-get install -y supervisor ffmpeg libsm6 libxext6
 
 # Copy the supervisor configuration file
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
