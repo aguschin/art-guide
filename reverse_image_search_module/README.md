@@ -1,16 +1,13 @@
 
-# Image Retrieval using ResNet-18 and Annoy Index
-
-This folder contains code for performing reverse image search using the ResNet-18 neural network for feature extraction and the Annoy Index for efficient nearest neighbor search. The provided code allows you to generate embeddings for a collection of images, build an Annoy Index from those embeddings, and perform reverse image searches to find similar images from a dataset.
 
 
 # Image Retrieval using ResNet-18 and Annoy Index
 
-This repository contains code for performing reverse image search using the ResNet-18 neural network for feature extraction and the Annoy Index for efficient nearest neighbor search.
+This folder contains code for performing reverse image search using the ResNet-18 neural network for feature extraction and the Annoy Index for efficient nearest neighbor search.
 
 ## Dependencies
 
-To use the code in this repository, you will need the following dependencies:
+To use the code in this folder, you will need the following dependencies:
 
 - Python 3.x
 - PyTorch
@@ -83,6 +80,12 @@ annoy_index.build(num_trees)
 
 The find_image function performs reverse image search using the Annoy Index.
 
+Why Annoy index?
+
+- The Annoy Index uses a tree-based structure that significantly speeds up the search process, allowing you to find approximate nearest neighbors much faster.
+- High dimensions can lead to the "curse of dimensionality," where distances between points become less meaningful.
+- The Annoy Index performs approximate nearest neighbor search, meaning it might not always find the exact nearest neighbor but provides a good approximation. 
+
 Example usage:
 
 ```
@@ -99,7 +102,46 @@ idx, dist, data = find_image(query_image)
 print(f"Most similar image: {data['title']} (Distance: {dist:.2f})")
 ```
 
+What can be improved in this section?
+
+When performing a reverse image search using the `find_image` function, the returned results include an index (`idx`), a distance (`dist`), and data about the most similar image (`data`).
+
+The distance (`dist`) represents the dissimilarity between the query image and the retrieved image embeddings. A lower distance indicates a higher degree of similarity. However, it's important to note that the distance's absolute value might not be as meaningful as its relative value compared to other distances in the result set.
+
+To determine whether a retrieved image is a close match, you can compare the distance to a pre-defined threshold. If the distance is below the threshold, the retrieved image can be considered a relevant match. On the other hand, if the distance exceeds the threshold, it might indicate that the retrieved image is not a suitable match.
+
+```
+# Example of using a distance threshold
+if dist < threshold:  
+    print(f"Most similar image: {data['title']} (Distance: {dist:.2f})")
+else:
+    print("No close match found. Consider refining your search.")
+```
+
 ## Dataset and Data Formatting
 
 
 Here we get the dataset in a CSV file named wikiart_scraped.csv.
+
+## Possible Future Steps
+
+### Explore Different Models:
+While we are using ResNet-18 for feature extraction, we consider trying other pre-trained models (such as ResNet-50, VGG16, or Inception) to improve the quality of reverse image search results. Different models might capture different features and provide more accurate embeddings.
+
+### Automated Testing: 
+Implement automated tests to validate any changes you make to the code. Automated tests can ensure that your modifications don't introduce regressions and that the core functionality remains intact.
+
+### Quality Metrics: 
+Develop ways to measure the quality of your reverse image search results. You could consider metrics like precision, recall, or F1-score to evaluate the accuracy of the retrieved images.
+
+### Optimize Search Speed:
+Investigate techniques to optimize the search speed further. This could involve adjusting parameters in the Annoy Index, experimenting with different distance metrics, or exploring GPU acceleration for feature extraction.
+
+### Interactive Web Interface: 
+Extend the codebase to create an interactive web interface for users to upload images and perform reverse image searches. This could enhance user experience and make the tool more accessible.
+
+### Parallel Processing: 
+Implement parallel processing techniques to speed up the extraction of embeddings and building of the Annoy Index, especially for large datasets.
+
+### Fine-Tuning: 
+If you have a specific domain or dataset, consider fine-tuning the pre-trained model on your data to improve the relevance of search results within that domain.
