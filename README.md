@@ -26,7 +26,7 @@ You can go [here](image_crop_module/README.md) for more details about the image 
 ### Reverse Image Search
 This module is in charge of finding the most similar image to the input image in the database and return the relevant information about the image.
 
-You can go [here](reverse_image_search/README.md) for more details about the reverse image search module.
+You can go [here](reverse_image_search_module/README.md) for more details about the reverse image search module.
 
 
 ### Description Generation
