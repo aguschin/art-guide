@@ -44,16 +44,26 @@ image = plt.imread('path_to_your_image.jpg')
 normalized_embedding = img2vec.getNormalizedVec(image)
 ```
 
-## Building the Annoy Index
+## Reverse Image Search by Building the Annoy Index.
 
-The Annoy Index is built using embeddings from a collection of images.
+#### What is Annoy?
+Annoy (Approximate Nearest Neighbors Oh Yeah) is a library that provides a data structure and algorithm for efficiently searching for approximate nearest neighbors in high-dimensional spaces.
 
-Embeddings should be stored in a .npy file, where each row represents an embedding.
+#### Why Annoy?
+We could have calculated the cosine similarities to find the nearest neighbor, as well as There are some other libraries to do nearest neighbor search. Annoy is almost as fast as the fastest libraries.
+Visit: https://github.com/spotify/annoy
 
-The annoy_index is built using the embeddings and can be used for nearest neighbor search.
+#### How it Works?
+- The Annoy Index is built using embeddings from a collection of images stored in a .npy file.
+- Initially, the dataset is divided into small clusters (called "forests" in Annoy). Each cluster contains a subset of data points.
+- In each cluster, a binary tree is built to recursively partition the data points based on their feature values.
+- When you query the Annoy index with a specific data point (query point), Annoy traverses the binary trees to find the cluster that is most likely to contain the nearest neighbors of the     
+  query point. Annoy narrows down the search space by traversing only the relevant branches of the binary trees.
+- The Annoy Index performs approximate nearest neighbor search, meaning it might not always find the exact nearest neighbor but provides a good approximation. 
 
-Example usage:
 
+#### Example usage:
+**Build Annoy Index**
 
 ```python
 import numpy as np
@@ -70,17 +80,9 @@ for idx, vec in enumerate(all_embeddings):
 num_trees = 50
 annoy_index.build(num_trees)
 ```
-## Reverse Image Search
 
-The find_image function performs reverse image search using the Annoy Index.
-
-Why Annoy index?
-
-- The Annoy Index uses a tree-based structure that significantly speeds up the search process, allowing you to find approximate nearest neighbors much faster.
-- High dimensions can lead to the "curse of dimensionality," where distances between points become less meaningful.
-- The Annoy Index performs approximate nearest neighbor search, meaning it might not always find the exact nearest neighbor but provides a good approximation. 
-
-Example usage:
+#### Example usage:
+**Reverse Image Search** 
 
 ```python
 import matplotlib.pyplot as plt
@@ -119,6 +121,9 @@ Here we get the dataset in a CSV file named wikiart_scraped.csv.
 ### Explore Different Models:
 While we are using ResNet-18 for feature extraction, we consider trying other pre-trained models (such as ResNet-50, VGG16, or Inception) to improve the quality of reverse image search results. Different models might capture different features and provide more accurate embeddings.
 
+### Data Migration from a file to DataBase:
+We are storing the embeddings in a single numpy file. we are planning to Extract the data from our numpy file, and then insert it into the database (Postgres/MYSQL). We will iterate through the numpy array and insert each embedding into the corresponding database table or collection.
+
 ### Automated Testing: 
 Implement automated tests to validate any changes you make to the code. Automated tests can ensure that your modifications don't introduce regressions and that the core functionality remains intact.
 
@@ -136,3 +141,4 @@ Implement parallel processing techniques to speed up the extraction of embedding
 
 ### Fine-Tuning: 
 If you have a specific domain or dataset, consider fine-tuning the pre-trained model on your data to improve the relevance of search results within that domain.
+
