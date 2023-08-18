@@ -4,13 +4,19 @@ FROM python:3.8
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the necessary files into the container
-COPY . /app
+COPY requirements.txt /app
 
 # Install Python dependencies
 RUN pip install -r requirements.txt
 
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+# Copy the necessary files into the container
+COPY . /app
+
+# Install libraries
+RUN apt-get update && apt-get install -y supervisor ffmpeg libsm6 libxext6
+
+# Copy the supervisor configuration file
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Command to run your application when the container starts
-CMD ["python", "bot.py"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

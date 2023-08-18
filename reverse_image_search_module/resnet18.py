@@ -7,7 +7,7 @@ torch.manual_seed(17)
 
 class Img2VecResnet18():
     def __init__(self, batch_size=64):
-        self.device = torch.device("cuda")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.numberFeatures = 512
         self.modelName = "resnet-18"
         self.model, self.featureLayer = self.getFeatureLayer()
