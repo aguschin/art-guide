@@ -39,3 +39,4 @@ pandas~=2.0.3
 annoy~=1.17.3
 transformers==4.31.0
 opencv-python==4.8.0.76
+pyttsx3==2.90
