@@ -1,6 +1,5 @@
 
 
-
 # Image Retrieval using ResNet-18 and Annoy Index
 
 This folder contains code for performing reverse image search using the ResNet-18 neural network for feature extraction and the Annoy Index for efficient nearest neighbor search.
@@ -19,7 +18,7 @@ To use the code in this folder, you will need the following dependencies:
 
 You can install these dependencies using the following command:
 
-```
+```python
 pip install torch torchvision numpy pandas matplotlib annoy
 ```
 ## Usage
@@ -33,15 +32,13 @@ The Img2VecResnet18 class provides methods to extract image embeddings using the
 
 Example usage:
 
-```
+```python
 from resnet_image_search import Img2VecResnet18
 import numpy as np
 import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
-
 # Initialize the Img2VecResnet18 instance
 img2vec = Img2VecResnet18()
-
 # Load an image and get its normalized embedding
 image = plt.imread('path_to_your_image.jpg')
 normalized_embedding = img2vec.getNormalizedVec(image)
@@ -58,17 +55,14 @@ The annoy_index is built using the embeddings and can be used for nearest neighb
 Example usage:
 
 
-```
+```python
 import numpy as np
 from annoy import AnnoyIndex
-
 # Load all embeddings from the .npy file
 all_embeddings = np.load('path_to_embeddings.npy')
 embedding_dim = all_embeddings.shape[1]
-
 # Build Annoy index
 annoy_index = AnnoyIndex(embedding_dim, metric='dot')
-
 for idx, vec in enumerate(all_embeddings):
     vec = vec / np.linalg.norm(vec)
     annoy_index.add_item(idx, vec)
@@ -88,16 +82,13 @@ Why Annoy index?
 
 Example usage:
 
-```
+```python
 import matplotlib.pyplot as plt
 from resnet_image_search import find_image
-
 # Load the image you want to search for
 query_image = plt.imread('path_to_query_image.jpg')
-
 # Perform reverse image search
 idx, dist, data = find_image(query_image)
-
 # Display the search results
 print(f"Most similar image: {data['title']} (Distance: {dist:.2f})")
 ```
@@ -110,7 +101,7 @@ The distance (`dist`) represents the dissimilarity between the query image and t
 
 To determine whether a retrieved image is a close match, you can compare the distance to a pre-defined threshold. If the distance is below the threshold, the retrieved image can be considered a relevant match. On the other hand, if the distance exceeds the threshold, it might indicate that the retrieved image is not a suitable match.
 
-```
+```python
 # Example of using a distance threshold
 if dist < threshold:  
     print(f"Most similar image: {data['title']} (Distance: {dist:.2f})")
