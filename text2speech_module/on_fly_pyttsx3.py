@@ -1,8 +1,6 @@
 import pyttsx3
-from IPython.display import Audio
 
-
-def text_to_audio(text, rate=150, volume=0.9, filename="output.mp3"):
+def pyttsx3_text_to_audio(text:str, index:int):
     """
     Convert a given text to audio and save it to a file.
     Args:
@@ -18,12 +16,25 @@ def text_to_audio(text, rate=150, volume=0.9, filename="output.mp3"):
     # Initialize the text-to-speech engine
     audio_converter = pyttsx3.init()
 
+    rate = 150
+    volume = 0.9
+
     # Set properties (optional)
     audio_converter.setProperty("rate", rate) # Speed of speech (words per minute)
     audio_converter.setProperty("volume", volume) # Volume level (0.0 to 1.0)
+
+    filename = f"{index}.mp3"
 
     # Convert the text to speech
     audio_converter.save_to_file(text, filename)
 
     # Wait until above command is finished.
     audio_converter.runAndWait()
+
+    return f"Audio file '{filename}' generated successfully."
+
+
+# Example usage
+my_text = "Welcome to Harbour.Space Project!"
+result = pyttsx3_text_to_audio(my_text, index=0)
+print(result)  # Output: "Audio file 'welcome_audio.mp3' generated successfully."
