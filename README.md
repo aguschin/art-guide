@@ -5,6 +5,8 @@ You can upload a picture, and it will generate an audio description to which you
 
 https://t.me/harbour_art_guide_bot
 
+[HackMD article about the project](https://hackmd.io/@aniervs/ryQt5Jlph)
+
 
 <img src="https://imgur.com/8xd8deQ.jpg"  width="60%" height="30%" alt="Demo"/>
 
