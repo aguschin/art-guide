@@ -48,8 +48,10 @@ class Img2VecResnet18():
         return embedding.numpy()[:, :, 0, 0]
 
 
+img2vec = Img2VecResnet18(batch_size=1)
+
+
 def extract_and_save_embeddings(input_folder, output_file):
-    img2vec = Img2VecResnet18(batch_size=1)
     image_files = [f for f in os.listdir(input_folder) if f.endswith(('.jpg', '.jpeg', '.png', '.bmp'))]
 
     counter = 0
