@@ -1,29 +1,48 @@
 import torch
 from annoy import AnnoyIndex
 from matplotlib import pyplot as plt
-
-from reverse_image_search_module.resnet18 import img2vec
+import ast
+from .resnet18 import img2vec
+#from reverse_image_search_module.resnet18 import img2vec
 import numpy as np
 import pandas as pd
 
 # Load all embeddings from the .npy filessssssssssssssssssss
-all_embeddings = np.load('./data/all_embeddings.npy')
-embedding_dim = all_embeddings.shape[1]
+all_embeddings = np.load('./data/embeddings.npy')
+#print(all_embeddings.shape)
+embedding_dim = all_embeddings.shape[2]
+#print(embedding_dim)
+file_names = np.load('./data/file_names.npy')
 
 # Build Annoy index
 annoy_index = AnnoyIndex(embedding_dim, metric='dot')  # using dot, while assuming the vectors are normalized
 
 for idx, vec in enumerate(all_embeddings):
+    # print(f"Vector {idx} shape: {vec.shape}")
+    # print(f"Vector {idx} type: {type(vec)}")
+    vec = vec.squeeze()
     vec = vec / np.linalg.norm(vec)
     annoy_index.add_item(idx, vec)
 
 num_trees = 50
 annoy_index.build(num_trees)
 
-dataset = pd.read_csv('./data/data.csv')
+dataset = pd.read_csv('./data/data.csv',low_memory=False)
+dataset['images'].fillna('[]', inplace=True)
 
+dataset['images'] = dataset['images'].apply(ast.literal_eval)
+
+def extract_file_name(x):
+    if isinstance(x, list) and len(x) > 0:
+        return x[0]['path'].split('/')[-1]
+    else:
+        return None
+
+dataset['file_name'] = dataset['images'].apply(extract_file_name)
 
 def change_format(data):
+    # image_path = data['image_urls'][0]['path']
+    # file_name = image_path.split('/')[-1]
     return {
         'author_name': data['Author'],
         'style': data['Styles'],
@@ -39,21 +58,47 @@ def change_format(data):
         'dimension': data['Dimensions'],
         'description': data['WikiDescription'],
         'tags': data['Tags'],
-        'image_url': data['image_urls']
+        'image_url': data['image_urls'],
+        # 'file_name': file_name
     }
 
 
 def find_image(img):
-    plt.imshow(img)
-    plt.show()
-
-    transposed_img = torch.from_numpy(np.transpose(img, (2, 0, 1)))
-    vector = img2vec.getVectors(transposed_img)
+    # print(img.shape)
+    # plt.imshow(img)
+    # plt.show()
+    #
+    #
+    # transposed_img = torch.from_numpy(np.transpose(img, (2, 0, 1)))
+    # #added
+    # transposed_img = transposed_img.to(torch.float)
+    # #
+    vector = img2vec.getVectors(img)
     vector = np.transpose(vector)
+    # vector = np.transpose(vector)
     vector = vector / np.linalg.norm(vector)
 
     idx, dist = annoy_index.get_nns_by_vector(vector, 1, search_k=-1, include_distances=True)
     idx, dist = idx[0], dist[0]
-    data = change_format(dataset.iloc[idx].to_dict())
-
+    file_n = file_names[idx]
+    # matching_idx = dataset[dataset['file_name'] == file_n].index
+    matching_idx = dataset[dataset['file_name'] == file_n].index
+    data = change_format(dataset.loc[matching_idx].to_dict())
     return idx, dist, data
+# import cv2  # OpenCV for image loading and preprocessing
+#from PIL import Image
+
+#image_path = '../data/img/full/9247d9e1c6308bed661ba721f7f35be1fe1f3b52.jpg'
+#image = Image.open(image_path)
+# feature_vector = img2vec.getVectors(image)
+
+# image_path = '../data/img/full/9247d9e1c6308bed661ba721f7f35be1fe1f3b52.jpg'
+# img = cv2.imread(image_path)
+# print(img.shape)
+# img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+# print(feature_vector.shape)
+#idx, dist, data = find_image(image)
+
+#print("Index:", idx)
+#print("Distance:", dist)
+#print("Data:", data)
