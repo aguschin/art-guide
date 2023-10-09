@@ -66,20 +66,3 @@ def find_image(img):
     matching_idx = dataset[dataset['file_name'] == file_n].index
     data = change_format(dataset.loc[matching_idx].to_dict())
     return idx, dist, data
-# import cv2  # OpenCV for image loading and preprocessing
-#from PIL import Image
-
-#image_path = '../data/img/full/9247d9e1c6308bed661ba721f7f35be1fe1f3b52.jpg'
-#image = Image.open(image_path)
-# feature_vector = img2vec.getVectors(image)
-
-# image_path = '../data/img/full/9247d9e1c6308bed661ba721f7f35be1fe1f3b52.jpg'
-# img = cv2.imread(image_path)
-# print(img.shape)
-# img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-# print(feature_vector.shape)
-#idx, dist, data = find_image(image)
-
-#print("Index:", idx)
-#print("Distance:", dist)
-#print("Data:", data)
