@@ -19,6 +19,8 @@ def run_all_models(filename, photo_url):
         return {'error': "Sorry, I couldn't find a match for that image."}
 
     description_text = describe(metadata)['description']
+    
+    filename = 'cache/'+metadata.get('author_name') +' - '+ metadata.get('title')
 
     text_to_audio(description_text, filename=filename)
 
