@@ -4,3 +4,6 @@
 /wikiart_scraped.csv
 /all_embeddings.npy
 /audio
+/embeddings.npy
+/embeddings_full.pkl
+/file_names.npy
