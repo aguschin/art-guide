@@ -1,11 +1,9 @@
 import pickle
 import numpy as np
-input_file = '/root/art-guide/image_search_modified/embeddings_full.pkl'
-# input_file = "/Users/mohammadsanaee/Documents/harbour/art projrct/art-guide/data/embeddings_full.pkl"
-values_output_file = '/root/art-guide/image_search_modified/embeddings.npy'
-keys_output_file = '/root/art-guide/image_search_modified/file_names.npy'
-# keys_output_file = '/Users/mohammadsanaee/Documents/harbour/art projrct/art-guide/data/embeddings_test.npy'
-# values_output_file = '/Users/mohammadsanaee/Documents/harbour/art projrct/art-guide/data/file_names_test.npy'
+input_file = '../data/embeddings_full.pkl'
+values_output_file = '../data/embeddings.npy'
+keys_output_file = '../data/file_names.npy'
+
 
 with open(input_file, 'rb') as f:
     data_dict = pickle.load(f)

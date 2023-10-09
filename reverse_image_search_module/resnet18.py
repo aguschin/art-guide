@@ -52,7 +52,6 @@ img2vec = Img2VecResnet18(batch_size=1)
 
 
 def extract_and_save_embeddings(input_folder, output_file):
-    img2vec = Img2VecResnet18(batch_size=1)
     image_files = [f for f in os.listdir(input_folder) if f.endswith(('.jpg', '.jpeg', '.png', '.bmp'))]
 
     counter = 0
@@ -83,8 +82,6 @@ def extract_and_save_embeddings(input_folder, output_file):
     print(f"Successful images: {counter}")
     print(f"Failed images: {failed}")
 if __name__ == "__main__":
-    input_folder = '/root/art-guide/data/img/full'
-    output_file = '/root/art-guide/image_search_modified/embeddings_full.pkl'
-    # input_folder = '/Users/mohammadsanaee/Documents/harbour/art projrct/image/img2'
-    # output_file = '/Users/mohammadsanaee/Documents/harbour/art projrct/image/img2/embeddings_test.pkl'
+    input_folder = '../data/img/full'
+    output_file = '../image_search_modified/embeddings_full.pkl'
     extract_and_save_embeddings(input_folder, output_file)
