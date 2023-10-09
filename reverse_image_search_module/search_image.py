@@ -63,6 +63,6 @@ def find_image(img):
     idx, dist = annoy_index.get_nns_by_vector(vector, 1, search_k=-1, include_distances=True)
     idx, dist = idx[0], dist[0]
     file_n = file_names[idx]
-    matching_idx = dataset[dataset['file_name'] == file_n].index
+    matching_idx = dataset[dataset['file_name'] == file_n].index.values[0]
     data = change_format(dataset.loc[matching_idx].to_dict())
     return idx, dist, data

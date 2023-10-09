@@ -20,7 +20,7 @@ def run_all_models(filename, photo_url):
 
     description_text = describe(metadata)['description']
     
-    filename = metadata.get('author_name')
+    filename = 'cache/'+metadata.get('author_name') +' - '+ metadata.get('title')
 
     text_to_audio(description_text, filename=filename)
 
