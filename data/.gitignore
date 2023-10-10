@@ -7,3 +7,5 @@
 /embeddings.npy
 /embeddings_full.pkl
 /file_names.npy
+/most_crop
+/most_no_crop

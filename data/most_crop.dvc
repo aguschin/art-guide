@@ -1,0 +1,6 @@
+outs:
+- md5: 27428093bbfb9ef51a4a931fb56e46e5.dir
+  size: 2591381
+  nfiles: 104
+  hash: md5
+  path: most_crop
