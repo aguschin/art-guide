@@ -70,4 +70,5 @@ def component_crop_image(image):
     x, y, width, height, _ = stats[best_c]
     croped = image_np[y:y+height, x:x+width]
 
-    return croped.astype(np.float32)
+    # todo: add the area proportion calculus
+    return croped.astype(np.float32), 1
