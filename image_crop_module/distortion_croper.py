@@ -3,6 +3,7 @@ from transformers import SegformerForSemanticSegmentation
 import torch
 import cv2
 import numpy as np
+import math
 
 
 MODEL_NAME = "nvidia/segformer-b0-finetuned-ade-512-512"
@@ -57,8 +58,33 @@ def select_corner(point_list, ref_point):
     return point
 
 
+def make_corners(point_list):
+    x1, y1 = point_list[0]
+    x2, y2 = point_list[1]
+    x3, y3 = point_list[2]
+
+    cross_product = (x2 - x1) * (y3 - y2) - (y2 - y1) * (x3 - x2)
+
+    if cross_product < 0:
+        return point_list[::-1]
+    else:
+        return point_list
+
+
+# poligon area
+def poligon_area_from_points(vertices):
+    vertices = np.vstack((vertices, vertices[0]))
+    # Calculate the area using the Shoelace formula
+    o = vertices[:-1, 0] * vertices[1:, 1] - vertices[1:, 0] * vertices[:-1, 1]
+    area = 0.5 * np.abs(np.sum(o))
+
+    return area
+
+
 def make_four_points(poligon):
     points = poligon.reshape(-1, 2)
+
+    assert poligon.shape[0] > 3
 
     points_distance = []
     for i in range(points.shape[0]):
@@ -88,22 +114,34 @@ def make_four_points(poligon):
 
         interseption_of_four_sides.append(interseption)
 
-    corner_oriented_interseption = [
-        select_corner(interseption_of_four_sides, (-1, -1)),  # 0, 0
-        select_corner(interseption_of_four_sides, (1, -1)),  # W, 0
-        select_corner(interseption_of_four_sides, (1, 1)),  # W, H
-        select_corner(interseption_of_four_sides, (-1, 1)),  # 0, H
-    ]
+    corner_oriented_interseption = make_corners(interseption_of_four_sides)
 
     return corner_oriented_interseption
 
 
-def filter_four_points(point_list, W, H):
-    new_l = [(min(max(x, 0), W), min(max(y, 0), H))
-             for x, y in point_list]
-    new_l = [(int(x), int(y)) for x, y in new_l]
+def adjust_points_and_padd(point_list, IW, IH):
+    # calculate padding for negative points value
+    top_pad = 0
+    bottom_pad = 0
+    left_pad = 0
+    right_pad = 0
 
-    return new_l
+    for point in point_list:
+        bottom_pad = max(bottom_pad, max(0, point[1]-IH))
+        top_pad = max(top_pad, max(0, -1 * point[1]))
+
+        right_pad = max(right_pad, max(0, point[0]-IW))
+        left_pad = max(left_pad, max(0, -1 * point[0]))
+
+    top_pad = math.ceil(top_pad)
+    bottom_pad = math.ceil(bottom_pad)
+    left_pad = math.ceil(left_pad)
+    right_pad = math.ceil(right_pad)
+
+    points = [(x + left_pad, y + top_pad) for x, y in point_list]
+    points = np.array(points)
+
+    return points, top_pad, bottom_pad, left_pad, right_pad
 
 
 #  ------------------------------------------------------------------
@@ -130,22 +168,14 @@ def find_best_contour(contours, W, H):
         distances_and_areas.append((i, area, D))
         area_threshold = max(area_threshold, area)
 
-    area_threshold = area_threshold * 0.75
+    area_threshold = area_threshold * 0.8
 
     selected = min(distances_and_areas,
-                   key=lambda x: x[2] if area >= area_threshold else 1e9)
+                   key=lambda x: x[2] if x[1] >= area_threshold else 1e9)
 
-    return contours[selected[0]]
+    convex_hull = cv2.convexHull(contours[selected[0]])
 
-
-# poligon area
-def poligon_area_from_points(vertices):
-    vertices = np.vstack((vertices, vertices[0]))
-    # Calculate the area using the Shoelace formula
-    o = vertices[:-1, 0] * vertices[1:, 1] - vertices[1:, 0] * vertices[:-1, 1]
-    area = 0.5 * np.abs(np.sum(o))
-
-    return area
+    return convex_hull, selected[1]
 
 
 @torch.no_grad()
@@ -158,6 +188,7 @@ def distortion_crop_image(image):
     # original size
     OW = image.width
     OH = image.height
+    image_area = OW*OH
 
     # generate the mask-segmentation
     inputs = processor(images=image, return_tensors="pt")
@@ -176,10 +207,15 @@ def distortion_crop_image(image):
                                    cv2.RETR_EXTERNAL,
                                    cv2.CHAIN_APPROX_SIMPLE)
 
+    # no painting found
     if len(contours) < 1:
         return np.array(image, dtype=np.float32) / 255.0, 1
 
-    contour = find_best_contour(contours, IW, IH)
+    contour, raw_contour_area = find_best_contour(contours, IW, IH)
+
+    # the area of the segemented area is too small
+    if raw_contour_area < 500:
+        return np.array(image, dtype=np.float32) / 255.0, 1
 
     del contours
 
@@ -192,9 +228,23 @@ def distortion_crop_image(image):
 
     # try to remove this in the final
     # todo: add support for padding with negative interseption
-    # todo: add support for non-conves poligons (use convex hull)
-    points = filter_four_points(points, IW, IH)
-    points = np.array(points)
+    points, top_pad, bottom_pad, left_pad, right_pad = adjust_points_and_padd(
+                                                        points, IW, IH)
+
+    # adjust images sizes
+    OW += left_pad + right_pad
+    IW += left_pad + right_pad
+    OH += top_pad + bottom_pad
+    IH += top_pad + bottom_pad
+
+    image_np = np.array(image, dtype=np.float32) / 255.0
+    image_np = cv2.copyMakeBorder(image_np,
+                                  top_pad,
+                                  bottom_pad,
+                                  left_pad,
+                                  right_pad,
+                                  cv2.BORDER_CONSTANT,
+                                  value=(0, 0, 0))  # padding color
 
     # make wraping matrix
     src_points = points * np.array([[OW/IW, OH/IH]])
@@ -209,13 +259,12 @@ def distortion_crop_image(image):
     dst_points = np.array([corner1, corner2, corner3, corner4],
                           dtype=np.float32)
 
-    area_proportion = poligon_area_from_points(dst_points)
     area_proportion = poligon_area_from_points(src_points)
+    area_proportion /= image_area
 
     # Compute the perspective transform matrix
     matrix = cv2.getPerspectiveTransform(src_points, dst_points)
 
-    image_np = np.array(image, dtype=np.float32) / 255.0
     # Apply the perspective warp to the image
     warped_image = cv2.warpPerspective(image_np, matrix, (OW, OH))
 
