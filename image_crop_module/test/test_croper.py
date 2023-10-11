@@ -41,7 +41,7 @@ def calculate_croped_number(path, threshold=0.9):
 
 def test_ratio_non_cropable_images():
     proportion = calculate_croped_number(DATA_MOST_NOT_CROP_PATH,
-                                         threshold=0.85)
+                                         threshold=0.9)
 
     assert proportion < 0.1
 
