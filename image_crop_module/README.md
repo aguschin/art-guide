@@ -8,14 +8,31 @@ The legacy cropper description based on component con be found [here](CCROPER.md
 For this, it is first preferable to use an image where the artwork is the center, as it will be used to select it.
 A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-ade-512-512) was used to separate the objects:
 
-<p align="center">
-  <img src="images/i1.png" alt="Imagen de muestra">
-</p>
 
+<table>
+  <tr>
+    <td><img src="image1.jpg" alt="Image 1"></td>
+    <td><img src="image2.jpg" alt="Image 2"></td>
+    <td><img src="image3.jpg" alt="Image 3"></td>
+    <td><img src="image4.jpg" alt="Image 4"></td>
+    <td><img src="image5.jpg" alt="Image 5"></td>
+  </tr>
+  <tr>
+    <td><img src="image6.jpg" alt="Image 6"></td>
+    <td><img src="image7.jpg" alt="Image 7"></td>
+    <td><img src="image8.jpg" alt="Image 8"></td>
+    <td><img src="image9.jpg" alt="Image 9"></td>
+    <td><img src="image10.jpg" alt="Image 10"></td>
+  </tr>
+  <tr>
+    <td><img src="image11.jpg" alt="Image 11"></td>
+    <td><img src="image12.jpg" alt="Image 12"></td>
+    <td><img src="image13.jpg" alt="Image 13"></td>
+    <td><img src="image14.jpg" alt="Image 14"></td>
+    <td><img src="image15.jpg" alt="Image 15"></td>
+  </tr>
+</table>
 
-<p align="center">
-  <img src="images/i2.png" alt="Imagen de muestra">
-</p>
 
 
 ## Technical details
