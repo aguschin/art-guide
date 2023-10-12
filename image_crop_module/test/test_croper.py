@@ -1,4 +1,5 @@
 import os
+from time import time
 from PIL import Image
 from ..distortion_croper import distortion_crop_image
 
@@ -51,3 +52,17 @@ def test_ratio_cropable_images():
                                          threshold=0.9)
 
     assert proportion > 0.9
+
+
+def test_croper_time_rate():
+    TIME_RATE = 1.5 * 60  # mean minutes per operation
+
+    initial_time = time()
+
+    _ = calculate_croped_number(DATA_MOST_NOT_CROP_PATH, threshold=1.0)
+    _ = calculate_croped_number(DATA_MOST_CROP_PATH, threshold=1.0)
+
+    dt = time() - initial_time
+    rate = dt / TIME_RATE
+
+    assert rate < TIME_RATE
