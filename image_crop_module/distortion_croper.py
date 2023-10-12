@@ -67,8 +67,18 @@ def make_corners(point_list):
 
     if cross_product < 0:
         return point_list[::-1]
-    else:
-        return point_list
+
+    if cross_product < 0:
+        point_list = point_list[::-1]
+
+    # firs corner point
+    first_corner = max(enumerate(point_list),
+                       key=lambda x: -x[1][0] - x[1][1])[0]
+
+    # shift the points
+    point_list = point_list[first_corner:] + point_list[:first_corner]
+
+    return point_list
 
 
 # poligon area
