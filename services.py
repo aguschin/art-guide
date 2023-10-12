@@ -6,6 +6,7 @@ from text2speech_module.google_text_to_speech import text_to_audio
 from reverse_image_search_module.search_image import find_image
 from image_crop_module.croper import crop_image
 
+
 def run_all_models(filename, photo_url):
     image = Image.open(requests.get(photo_url, stream=True).raw)
 
@@ -19,8 +20,10 @@ def run_all_models(filename, photo_url):
         return {'error': "Sorry, I couldn't find a match for that image."}
 
     description_text = describe(metadata)['description']
-    
-    filename = 'cache/'+metadata.get('author_name') +' - '+ metadata.get('title')
+
+    filename = 'cache/'+metadata.get('author_name') + \
+               ' - ' + \
+               metadata.get('title')
 
     text_to_audio(description_text, filename=filename)
 
