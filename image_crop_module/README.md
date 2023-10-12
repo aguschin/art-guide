@@ -93,6 +93,7 @@ edges well and more than one painting is selected.
 <table>
   <tr>
     <td><img src="images/c1.png" alt="Image 11"></td>
+    <td><img src="images/c2.png" alt="Image 11"></td>
     <td><img src="images/c3.png" alt="Image 12"></td>
   </tr>
 </table>
