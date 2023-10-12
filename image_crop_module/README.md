@@ -14,41 +14,41 @@ A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-a
   <td>Rotated</td> <td>In Perspective</td> <td>Normal</td>
   </tr>
   <tr>
-    <td><img src="images/d1.jpg" alt="Image 1"></td>
-    <td><img src="images/d6.jpg" alt="Image 2"></td>
-    <td><img src="images/d11.jpg" alt="Image 3"></td>
+    <td><img src="images/d1.png" alt="Image 1"></td>
+    <td><img src="images/d6.png" alt="Image 2"></td>
+    <td><img src="images/d11.png" alt="Image 3"></td>
   </tr>
   <tr>
     Segmentation with NN
   </tr>
   <tr>
-    <td><img src="images/d2.jpg" alt="Image 6"></td>
-    <td><img src="images/d7.jpg" alt="Image 7"></td>
-    <td><img src="images/d12.jpg" alt="Image 8"></td>
+    <td><img src="images/d2.png" alt="Image 6"></td>
+    <td><img src="images/d7.png" alt="Image 7"></td>
+    <td><img src="images/d12.png" alt="Image 8"></td>
   </tr>
   <tr>
     Contour
   </tr>
   <tr>
-    <td><img src="images/d3.jpg" alt="Image 11"></td>
-    <td><img src="images/d8.jpg" alt="Image 12"></td>
-    <td><img src="images/d13.jpg" alt="Image 13"></td>
+    <td><img src="images/d3.png" alt="Image 11"></td>
+    <td><img src="images/d8.png" alt="Image 12"></td>
+    <td><img src="images/d13.png" alt="Image 13"></td>
   </tr>
   <tr>
     Fiting a 4-side poligon
   </tr>
   <tr>
-    <td><img src="images/d4.jpg" alt="Image 11"></td>
-    <td><img src="images/d9.jpg" alt="Image 12"></td>
-    <td><img src="images/d14.jpg" alt="Image 13"></td>
+    <td><img src="images/d4.png" alt="Image 11"></td>
+    <td><img src="images/d9.png" alt="Image 12"></td>
+    <td><img src="images/d14.png" alt="Image 13"></td>
   </tr>
   <tr>
     Apply distortion/angle/size transformation
   </tr>
   <tr>
-    <td><img src="images/d5.jpg" alt="Image 11"></td>
-    <td><img src="images/d10.jpg" alt="Image 12"></td>
-    <td><img src="images/d15.jpg" alt="Image 13"></td>
+    <td><img src="images/d5.png" alt="Image 11"></td>
+    <td><img src="images/d10.png" alt="Image 12"></td>
+    <td><img src="images/d15.png" alt="Image 13"></td>
   </tr>
 </table>
 
