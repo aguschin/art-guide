@@ -1,12 +1,13 @@
 # Image Croper Module
 
-This module is in charge of cropping and adjust the image to the object of interest, in this case it is a painting. In case there is no image, it returns the original image.
-The legacy cropper description based on component con be found [here](CCROPER.md)
+This module is in charge of cropping and adjust the image to the object of interest, in this case it is a painting. In case there is no painting, it returns the original image.
+The legacy cropper description based on component can be found [here](CCROPER.md)
 
 
 
 For this, it is first preferable to use an image where the artwork is the center, as it will be used to select it.
 A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-ade-512-512) was used to separate the objects:
+
 
 
 <table>
@@ -20,7 +21,7 @@ A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-a
   </tr>
   <tr>
   <td>
-    Segmentation with NN
+    Segmentation with NN (using the hugging face model)
   </td>
   </tr>
   <tr>
@@ -30,7 +31,7 @@ A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-a
   </tr>
   <tr>
   <td>
-    Contour
+    Contour (using opencv)
   <td>
   </tr>
   <tr>
@@ -40,7 +41,7 @@ A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-a
   </tr>
   <tr>
   <td>
-    Fiting a 4-side poligon
+    Fiting a 4-side poligon (opencv + our heuristics)
   </td>
   </tr>
   <tr>
@@ -50,7 +51,7 @@ A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-a
   </tr>
   <tr>
   <td>
-    Apply distortion/angle/size transformation
+    Apply distortion/angle/size transformation ( :) )
   </td>
   </tr>
   <tr>
@@ -65,10 +66,27 @@ A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-a
 ## Technical details
 
 It was used opencv and huggingface modules to archive the current results.
-An erosion operation was used to separate the components before the centroids calculations but in some cases the results are not good.
+
+
+Three tests were created
+
+ * One proves that the croper works
+ * One uses approximately 100 images that **should be cropped**, and only passes if more than **90%** pass.
+ * One uses approximately 100 images that **should not be cropped** and only passes if less than **10%** are cropped.
+
+
+to run the 3 tests, in the root folder:
+```shell
+source venv/bin/activate
+pytest image_crop_module
+```
 
 
 ### Future steps and improvements
 
-The segmentation module will need to be improved in the future. The current one does not detect some objects in the dataset such as vessels.
+The segmentation module will need to be improved in the future.
+Since the current one only works with low resolution, it can happen that
+the result of segmentation sticks to other objects and does not define the
+edges well and more than one painting is selected.
+
 
