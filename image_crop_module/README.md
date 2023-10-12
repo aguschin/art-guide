@@ -19,7 +19,9 @@ A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-a
     <td><img src="images/d11.png" alt="Image 3"></td>
   </tr>
   <tr>
+  <td>
     Segmentation with NN
+  </td>
   </tr>
   <tr>
     <td><img src="images/d2.png" alt="Image 6"></td>
@@ -27,7 +29,9 @@ A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-a
     <td><img src="images/d12.png" alt="Image 8"></td>
   </tr>
   <tr>
+  <td>
     Contour
+  <td>
   </tr>
   <tr>
     <td><img src="images/d3.png" alt="Image 11"></td>
@@ -35,7 +39,9 @@ A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-a
     <td><img src="images/d13.png" alt="Image 13"></td>
   </tr>
   <tr>
+  <td>
     Fiting a 4-side poligon
+  </td>
   </tr>
   <tr>
     <td><img src="images/d4.png" alt="Image 11"></td>
@@ -43,7 +49,9 @@ A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-a
     <td><img src="images/d14.png" alt="Image 13"></td>
   </tr>
   <tr>
+  <td>
     Apply distortion/angle/size transformation
+  </td>
   </tr>
   <tr>
     <td><img src="images/d5.png" alt="Image 11"></td>
