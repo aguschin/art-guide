@@ -66,9 +66,6 @@ def make_corners(point_list):
     cross_product = (x2 - x1) * (y3 - y2) - (y2 - y1) * (x3 - x2)
 
     if cross_product < 0:
-        return point_list[::-1]
-
-    if cross_product < 0:
         point_list = point_list[::-1]
 
     # firs corner point
