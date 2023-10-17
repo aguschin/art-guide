@@ -1,0 +1,25 @@
+name: Check Bot Status
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    env:
+        api_id: ${{secrets.api_id}}
+        api_hash: ${{ secrets.api_hash }}
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+
+    - name: Run Python script
+      run: python test.py
