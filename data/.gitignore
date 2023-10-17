@@ -4,3 +4,8 @@
 /wikiart_scraped.csv
 /all_embeddings.npy
 /audio
+/embeddings.npy
+/embeddings_full.pkl
+/file_names.npy
+/most_crop
+/most_no_crop

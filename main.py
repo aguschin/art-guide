@@ -4,6 +4,7 @@ from services import run_all_models
 
 app = FastAPI()
 
+
 @app.get("/process_image/")
 async def process_image(json: dict):
     filename = json.get('filename')
@@ -12,6 +13,7 @@ async def process_image(json: dict):
     response = run_all_models(filename, photo_url)
 
     return response
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000)

@@ -5,6 +5,7 @@ from torchvision import transforms
 import torchvision
 import PIL
 from PIL import Image
+import pickle
 
 torch.manual_seed(17)
 
@@ -30,9 +31,9 @@ class Img2VecResnet18():
 
     def preprocess_image(self, image):
         transformationForCNNInput = transforms.Compose([transforms.Resize((224, 224))])
-        image = transformationForCNNInput(image)
         if type(image) != torch.Tensor:
             image = self.toTensor(image)
+        image = transformationForCNNInput(image)
         return self.normalize(image).unsqueeze(0).to(self.device)
 
     def getVectors(self, images):
@@ -47,7 +48,6 @@ class Img2VecResnet18():
         h.remove()
         return embedding.numpy()[:, :, 0, 0]
 
-
 img2vec = Img2VecResnet18(batch_size=1)
 
 
@@ -56,44 +56,32 @@ def extract_and_save_embeddings(input_folder, output_file):
 
     counter = 0
     failed = 0
-    save_interval = 3000000
-    embeddings_chunk = []
+    embeddings_dict = {}
+
+    for image_file in image_files:
+        image_path = os.path.join(input_folder, image_file)
+        try:
+            image = Image.open(image_path)
+            feature_vector = img2vec.getVectors(image)
+        except Exception as e:
+            print(f"Skipping image: {image_file} - Error: {e}")
+            failed += 1
+            embeddingzero = np.zeros((1, img2vec.numberFeatures))
+            embeddings_dict[str(embeddingzero)] = image_file
+            continue
+
+        embeddings_dict[image_file] = np.asarray(feature_vector)
+        counter += 1
+
+        if counter % 1000 == 0:
+            print(counter)
 
     with open(output_file, 'wb') as output_f:
-        for image_file in image_files:
-            image_path = os.path.join(input_folder, image_file)
-            try:
-                image = Image.open(image_path)
-                feature_vector = img2vec.getVectors(image)
-            except Exception as e:
-                print(f"Skipping image: {image_file} - Error: {e}")
-                failed += 1
-                embeddings = np.zeros((1, img2vec.numberFeatures))
-                embeddings_chunk.append(embeddings)
-                continue
-
-            embeddings_chunk.append(feature_vector)
-            counter += 1
-            if counter % save_interval == 0:
-                embeddings_chunk = np.vstack(embeddings_chunk)
-                with open(output_file, 'ab') as output_f:
-                    np.save(output_f, embeddings_chunk)
-                embeddings_chunk = []
-
-            if counter % 100 == 0:
-                print(counter)
-
-        if embeddings_chunk:
-            embeddings_chunk = np.vstack(embeddings_chunk)
-            np.save(output_f, embeddings_chunk)
+        pickle.dump(embeddings_dict, output_f)
 
     print(f"Successful images: {counter}")
     print(f"Failed images: {failed}")
-
-
 if __name__ == "__main__":
-    input_folder = '/root/art-guide/data/img/full'
-    output_file = '/root/art-guide/image_search_modified/embeddings_full_v3.npy'
-    # input_folder = '/Users/mohammadsanaee/Documents/harbour/art projrct/image/img2'
-    # output_file = '/Users/mohammadsanaee/Documents/harbour/art projrct/image/img2/embeddings_test.npy'
+    input_folder = '../data/img/full'
+    output_file = '../image_search_modified/embeddings_full.pkl'
     extract_and_save_embeddings(input_folder, output_file)
