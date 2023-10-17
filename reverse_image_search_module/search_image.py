@@ -1,4 +1,3 @@
-import torch
 from annoy import AnnoyIndex
 import ast
 from .resnet18 import img2vec
@@ -12,7 +11,8 @@ embedding_dim = all_embeddings.shape[2]
 file_names = np.load('./data/file_names.npy')
 
 # Build Annoy index
-annoy_index = AnnoyIndex(embedding_dim, metric='dot')  # using dot, while assuming the vectors are normalized
+# using dot, while assuming the vectors are normalized
+annoy_index = AnnoyIndex(embedding_dim, metric='dot')
 
 for idx, vec in enumerate(all_embeddings):
     vec = vec.squeeze()
@@ -22,10 +22,12 @@ for idx, vec in enumerate(all_embeddings):
 num_trees = 50
 annoy_index.build(num_trees)
 
-dataset = pd.read_csv('./data/data.csv',low_memory=False)
+dataset = pd.read_csv('./data/data.csv',
+                      low_memory=False)
 dataset['images'].fillna('[]', inplace=True)
 
 dataset['images'] = dataset['images'].apply(ast.literal_eval)
+
 
 def extract_file_name(x):
     if isinstance(x, list) and len(x) > 0:
@@ -33,7 +35,9 @@ def extract_file_name(x):
     else:
         return None
 
+
 dataset['file_name'] = dataset['images'].apply(extract_file_name)
+
 
 def change_format(data):
     return {
@@ -55,14 +59,29 @@ def change_format(data):
     }
 
 
-def find_image(img, n=1):
-    tra=transforms.Compose([transforms.Resize((224, 224))])
+def find_index_from_image(img, n):
+    tra = transforms.Compose([transforms.Resize((224, 224))])
     img = tra(img)
     vector = img2vec.getVectors(img)
     vector = np.transpose(vector)
-    vector = vector / np.linalg.norm(vector)
 
-    idx, dist = annoy_index.get_nns_by_vector(vector, n, search_k=-1, include_distances=True)
+    norm = np.linalg.norm(vector)
+
+    # in case it is 0
+    if np.abs(norm) > 1e-9:
+        vector = vector / norm
+
+    idx, dist = annoy_index.get_nns_by_vector(vector,
+                                              n,
+                                              search_k=-1,
+                                              include_distances=True)
+
+    return idx, dist
+
+
+def find_image(img, n=1):
+    idx, dist = find_index_from_image(img, n)
+
     file_n = file_names[idx[0]]
     matching_idx = dataset[dataset['file_name'] == file_n].index.values[0]
     data = change_format(dataset.loc[matching_idx].to_dict())
