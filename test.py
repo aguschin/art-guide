@@ -3,7 +3,6 @@ import time
 from telethon.sync import TelegramClient
 from telethon.tl import types
 from decouple import config
-import ipdb
 
 api_id = config("my_api_id")
 api_hash = config("my_api_hash")
