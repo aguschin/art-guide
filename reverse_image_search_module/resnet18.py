@@ -1,33 +1,29 @@
 import os
 import numpy as np
 import torch
-from torchvision import transforms
-import torchvision
-import PIL
 from PIL import Image
 import pickle
+from transformers import ViTFeatureExtractor, ViTModel
+from torchvision import transforms  
 
 torch.manual_seed(17)
 
-
-class Img2VecResnet18():
+class Img2VecViT():
     def __init__(self, batch_size=64):
         self.device = torch.device("cpu")  # Use CPU explicitly
-        self.numberFeatures = 512
-        self.modelName = "resnet-18"
+        self.numberFeatures = 768 
+        self.modelName = "google/vit-base-patch16-224-in21k"  
         self.model, self.featureLayer = self.getFeatureLayer()
         self.model = self.model.to(self.device)
         self.model.eval()
         self.toTensor = transforms.ToTensor()
-        self.normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        self.normalize = transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]) 
         self.batch_size = batch_size
 
     def getFeatureLayer(self):
-        cnnModel = torchvision.models.resnet18(pretrained=True)
-        layer = cnnModel._modules.get('avgpool')
-        self.layer_output_size = 512
-
-        return cnnModel, layer
+        feature_extractor = ViTFeatureExtractor(model_name=self.modelName)
+        model = ViTModel.from_pretrained(self.modelName)
+        return model, feature_extractor
 
     def preprocess_image(self, image):
         transformationForCNNInput = transforms.Compose([transforms.Resize((224, 224))])
@@ -38,18 +34,14 @@ class Img2VecResnet18():
 
     def getVectors(self, images):
         images = self.preprocess_image(images)
-        embedding = torch.zeros(self.batch_size, self.numberFeatures, 1, 1)
+        with torch.no_grad():
+            output = self.model(images)
+            feature_vector = output.last_hidden_state.mean(dim=1)  # Take the mean over all tokens
 
-        def copyData(m, i, o):
-            embedding.copy_(o.data)
+        return feature_vector.numpy()
 
-        h = self.featureLayer.register_forward_hook(copyData)
-        self.model(images)
-        h.remove()
-        return embedding.numpy()[:, :, 0, 0]
 
-img2vec = Img2VecResnet18(batch_size=1)
-
+img2vec = Img2VecViT(batch_size=1)
 
 def extract_and_save_embeddings(input_folder, output_file):
     image_files = [f for f in os.listdir(input_folder) if f.endswith(('.jpg', '.jpeg', '.png', '.bmp'))]
@@ -73,7 +65,7 @@ def extract_and_save_embeddings(input_folder, output_file):
         embeddings_dict[image_file] = np.asarray(feature_vector)
         counter += 1
 
-        if counter % 1000 == 0:
+        if counter % 1 == 0:
             print(counter)
 
     with open(output_file, 'wb') as output_f:
@@ -81,7 +73,8 @@ def extract_and_save_embeddings(input_folder, output_file):
 
     print(f"Successful images: {counter}")
     print(f"Failed images: {failed}")
+
 if __name__ == "__main__":
     input_folder = '../data/img/full'
-    output_file = '../image_search_modified/embeddings_full.pkl'
+    output_file = '../data/embeddings_full.pkl'
     extract_and_save_embeddings(input_folder, output_file)
