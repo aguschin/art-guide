@@ -1,8 +1,11 @@
 import os
+import numpy as np
 import random
 from PIL import Image
 from ..search_image import find_index_from_image, find_file_name
 import logging
+from sklearn.metrics import precision_recall_curve
+from ..utils import make_syntetic_first_second_distances
 
 
 DATA_IMAGES_PATH = 'data/img/full/'
@@ -64,3 +67,22 @@ def test_static_accuracy_random():
     mylogger.info(f"test_static_acc (random): ACCURACY = {acc}")
 
     assert acc > 0.98
+
+
+def test_precision_recall():
+    y_test, y_score = make_syntetic_first_second_distances(DATA_IMAGES_PATH,
+                                                           n=5000)
+    precision, recall, thresholds = precision_recall_curve(y_test, y_score)
+
+    # find recall value with 0.9 of presition value
+    index = np.searchsorted(precision, 0.9, side='left')
+    if index > precision.shape[0]:
+        index = precision.shape[0]-1
+
+    recall_idx = recall[index]
+
+    mylogger.info(f'test presition/recall presition value {precision[index]}')
+    mylogger.info(f'test presition/recall recall value {recall_idx}')
+    mylogger.info(f'test presition/recall threshold value {thresholds[index]}')
+
+    assert recall_idx > 0.6
