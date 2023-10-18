@@ -18,14 +18,14 @@ for index,val in enumerate(values):
     try:
         shape = val.shape
     except AttributeError:
-       values[index]=np.zeros((1,768))
-	 #print(f"Value without shape at index {index}: {val}")
-       continue
+        values[index]=np.zeros((1,2048))
+        print(f"Value without shape at index {index}: {val}")
+        continue
     value_shapes.add(shape)
 
 #value_shapes = set(val.shape for val in values)
 #if len(value_shapes) != 1:
-# `   raise ValueError("All values in the dictionary must have the same shape.")
+#    raise ValueError("All values in the dictionary must have the same shape.")
 print(value_shapes)
 keys_array = np.array(keys)
 values_array = np.array(values)
