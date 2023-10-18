@@ -17,7 +17,12 @@ def get_image_idx_name_matching(images_names):
     positive = 0
 
     for _im in images_names:
-        image = Image.open(os.path.join(DATA_IMAGES_PATH, _im))
+        try:
+            image = Image.open(os.path.join(DATA_IMAGES_PATH, _im))
+        except Exception as ex:
+            mylogger.error(f'image {_im} load error')
+            mylogger.error(str(ex))
+            continue
 
         idx, dist = find_index_from_image(image, n=1)
         idx = idx[0]
@@ -27,8 +32,7 @@ def get_image_idx_name_matching(images_names):
         if file_name == _im:
             positive += 1
         else:
-            mylogger.info(f"test match idxs: UNMATCHED <original>{_im} \
-                      <matched>{file_name}")
+            mylogger.info(f"UNMATCHED <original>{_im} <matched>{file_name}")
 
     return positive
 
