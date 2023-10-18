@@ -68,8 +68,7 @@ def find_index_from_image(img, n):
     norm = np.linalg.norm(vector)
 
     # in case it is 0
-    if np.abs(norm) > 1e-9:
-        vector = vector / norm
+    vector = vector / (norm + 1e-9)
 
     idx, dist = annoy_index.get_nns_by_vector(vector,
                                               n,
@@ -79,10 +78,15 @@ def find_index_from_image(img, n):
     return idx, dist
 
 
+def find_file_name(idx):
+    return file_names[idx]
+
+
 def find_image(img, n=1):
     idx, dist = find_index_from_image(img, n)
 
-    file_n = file_names[idx[0]]
+    file_n = find_file_name(idx[0])
+
     matching_idx = dataset[dataset['file_name'] == file_n].index.values[0]
     data = change_format(dataset.loc[matching_idx].to_dict())
     if n == 1:
