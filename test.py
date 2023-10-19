@@ -4,8 +4,8 @@ from telethon.sync import TelegramClient
 from telethon.tl import types
 from decouple import config
 
-api_id = config("my_api_id")
-api_hash = config("my_api_hash")
+api_id = config("api_id")
+api_hash = config("api_hash")
 
 timeout_seconds = 600
 
