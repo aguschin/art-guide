@@ -11,6 +11,7 @@ jobs:
     env:
         api_id: ${{secrets.api_id}}
         api_hash: ${{ secrets.api_hash }}
+        phone: ${{ secrets.phone }}
 
     steps:
     - name: Check out code
