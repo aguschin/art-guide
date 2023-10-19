@@ -26,7 +26,7 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install dvc dvc-ssh
 
       - name: Pull dvc data
         run: dvc pull data/data.csv.dvc
