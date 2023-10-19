@@ -20,5 +20,5 @@ pytest <module name>
 
 the current modules that have tests are:
 
- * [image_crop_module](../image_crop_module/README.md)
- * [reverse_image_search_module](../reverse_image_search_module/README.md)
+ * [image_crop_module](../image_crop_module/README.md#technical-details)
+ * [reverse_image_search_module](../reverse_image_search_module/README.md#tests)

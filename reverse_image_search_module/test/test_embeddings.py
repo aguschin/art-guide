@@ -22,9 +22,11 @@ def get_image_idx_name_matching(images_names):
     for _im in images_names:
         try:
             image = Image.open(os.path.join(DATA_IMAGES_PATH, _im))
+            # to check the size and truncation
+            _ = image.resize((255, 255))
         except Exception as ex:
-            mylogger.error(f'image {_im} load error')
-            mylogger.error(str(ex))
+            mylogger.info(f'image {_im} load error')
+            mylogger.info(str(ex))
             continue
 
         idx, dist = find_index_from_image(image, n=1)
