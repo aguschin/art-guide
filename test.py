@@ -6,6 +6,8 @@ from decouple import config
 
 api_id = config("api_id")
 api_hash = config("api_hash")
+phone = config("phone")
+
 
 timeout_seconds = 600
 
@@ -55,8 +57,11 @@ def check_audio_generation(client, chat_id, timeout_seconds):
 
 def main():
     with TelegramClient('anon', api_id, api_hash) as client:
+        client.connect()
+        if not client.is_user_authorized():
+            client.send_code_request(phone)
+            client.sign_in(phone, input('Enter code: '))
         chat_id = 'harbour_art_guide_bot'
-
         image_path = os.path.join(current_directory, data_folder, image_filename)
 
         send_image_to_bot(client, chat_id, image_path)
