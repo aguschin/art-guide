@@ -25,17 +25,11 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Install dvc
-        run: pip install dvc
-
-      - name: Install dvc-ssh
-        run: pip install dvc-ssh
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
       - name: Pull dvc data
         run: dvc pull data/data.csv.dvc
-
-      - name: Pull dvc wikiart_scraped # to remove in the future
-        run: dvc pull data/wikiart_scraped.csv.dvc
 
       - name: Pull dvc all_embeddings
         run: dvc pull data/all_embeddings.npy.dvc
