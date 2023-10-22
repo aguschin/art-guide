@@ -52,6 +52,8 @@ def change_format(data):
         'description': data['WikiDescription'],
         'tags': data['Tags'],
         'image_url': data['image_urls'],
+        'file_name': data["file_name"],
+
     }
 
 
@@ -63,9 +65,11 @@ def find_image(img, n=1):
     vector = vector / np.linalg.norm(vector)
 
     idx, dist = annoy_index.get_nns_by_vector(vector, n, search_k=-1, include_distances=True)
-    file_n = file_names[idx[0]]
-    matching_idx = dataset[dataset['file_name'] == file_n].index.values[0]
-    data = change_format(dataset.loc[matching_idx].to_dict())
+    data = []
+    for i in idx:
+        file_n = file_names[i]
+        matching_idx = dataset[dataset['file_name'] == file_n].index.values[0]
+        data.append(change_format(dataset.loc[matching_idx].to_dict()))
     if n == 1:
-        return idx[0], dist[0], data
+        return idx[0], dist[0], data[0]
     return idx, dist, data
