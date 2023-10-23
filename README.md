@@ -1,20 +1,21 @@
 # Art-guide
-Your guide in the world of art.
-This telegram bot serves as an audio guide at Art Museums.
-You can upload a picture, and it will generate an audio description to which you can listen.
 
-https://t.me/harbour_art_guide_bot
-
-[HackMD article about the project](https://hackmd.io/@aniervs/ryQt5Jlph)
-
+A telegram bot that can be your audio guide at Art Museums.
+Send a photo of an artwork, and it will generate an audio description to which you can listen to.
 
 <img src="https://imgur.com/8xd8deQ.jpg"  width="60%" height="30%" alt="Demo"/>
+
+Try it out: https://t.me/harbour_art_guide_bot
+
+We developed this project during [the class in Harbour.Space](https://harbour.space/data-science/courses/practicing-ds-skills-in-ml-competitions-alexander-guschin-875).
 
 ---
 
 ## How it works?
 
 <img src="https://i.imgur.com/vRb0alE.jpg"  alt="Flow Diagram"/>
+
+[Read a HackMD article about the project](https://hackmd.io/@aniervs/ryQt5Jlph)
 
 ## Modules:
 
