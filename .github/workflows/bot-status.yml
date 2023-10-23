@@ -1,17 +1,8 @@
 name: Check Bot Status
 
-on:
-  schedule:
-    - cron: '0 * * * *'
-
 jobs:
   run-script:
     runs-on: ubuntu-latest
-
-    env:
-        api_id: ${{secrets.api_id}}
-        api_hash: ${{ secrets.api_hash }}
-        phone: ${{ secrets.phone }}
 
     steps:
     - name: Check out code
@@ -29,3 +20,7 @@ jobs:
     
     - name: Run Python script
       run: python test.py
+      env:
+        api_id: ${{secrets.api_id}}
+        api_hash: ${{ secrets.api_hash }}
+        phone: ${{ secrets.phone }}
