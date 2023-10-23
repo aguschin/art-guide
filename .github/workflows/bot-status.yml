@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-        api_id: ${{secrets.api_id}}
-        api_hash: ${{ secrets.api_hash }}
-        phone: ${{ secrets.phone }}
+        API_ID: ${{ secrets.API_ID }}
+        API_HASH: ${{ secrets.API_HASH }}
+        PHONE: ${{ secrets.PHONE }}
 
     steps:
     - name: Check out code

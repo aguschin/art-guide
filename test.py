@@ -4,9 +4,9 @@ from telethon.sync import TelegramClient
 from telethon.tl import types
 from decouple import config
 
-api_id = config("api_id")
-api_hash = config("api_hash")
-phone = config("phone")
+API_ID = config("API_ID")
+API_HASH = config("API_HASH")
+PHONE = config("PHONE")
 
 
 timeout_seconds = 600
@@ -56,16 +56,16 @@ def check_audio_generation(client, chat_id, timeout_seconds):
                             return f"Unexpected audio file found: {file_name}"
 
 def main():
-    with TelegramClient('anon', api_id, api_hash) as client:
+    with TelegramClient('anon', API_ID, API_HASH) as client:
         client.connect()
         if not client.is_user_authorized():
-            client.send_code_request(phone)
-            client.sign_in(phone, input('Enter code: '))
+            client.send_code_request(PHONE)
+            client.sign_in(PHONE, input('Enter code: '))
         chat_id = 'harbour_art_guide_bot'
         image_path = os.path.join(current_directory, data_folder, image_filename)
 
         send_image_to_bot(client, chat_id, image_path)
-        time.sleep(15)
+        time.sleep(10)
         result = check_audio_generation(client, chat_id, timeout_seconds)
         print(result)
 
