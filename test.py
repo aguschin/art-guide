@@ -4,9 +4,9 @@ from telethon.sync import TelegramClient
 from telethon.tl import types
 from decouple import config
 
-API_ID = config("API_ID") or os.environ["API_ID"]
-API_HASH = config("API_HASH") or os.environ["API_HASH"]
-PHONE = config("PHONE") or os.environ["PHONE"]
+API_ID = os.environ.get("API_ID", config("API_ID"))
+API_HASH = os.environ.get("API_HASH", config("API_HASH"))
+PHONE = os.environ.get("PHONE", config("PHONE"))
 
 
 timeout_seconds = 600
@@ -55,19 +55,19 @@ def check_audio_generation(client, chat_id, timeout_seconds):
                             # print(f"Unexpected audio file found: {file_name}")
                             return f"Unexpected audio file found: {file_name}"
 
-def main():
-    with TelegramClient('anon', API_ID, API_HASH) as client:
-        client.connect()
-        if not client.is_user_authorized():
-            client.send_code_request(PHONE)
-            client.sign_in(PHONE, input('Enter code: '))
-        chat_id = 'harbour_art_guide_bot'
-        image_path = os.path.join(current_directory, data_folder, image_filename)
 
-        send_image_to_bot(client, chat_id, image_path)
-        time.sleep(10)
-        result = check_audio_generation(client, chat_id, timeout_seconds)
-        print(result)
+def main():
+    client = TelegramClient('anon', API_ID, API_HASH).start(phone=PHONE)
+    if not client.is_user_authorized():
+        client.send_code_request(PHONE)
+        client.sign_in(PHONE, input('Enter the code: '))
+    chat_id = 'harbour_art_guide_bot'
+    image_path = os.path.join(current_directory, data_folder, image_filename)
+
+    send_image_to_bot(client, chat_id, image_path)
+    time.sleep(10)
+    result = check_audio_generation(client, chat_id, timeout_seconds)
+    print(result)
 
 
 if __name__ == '__main__':
