@@ -3,7 +3,7 @@
 A telegram bot that can be your audio guide at Art Museums.
 Send a photo of an artwork, and it will generate an audio description to which you can listen to.
 
-<img src="https://imgur.com/8xd8deQ.jpg"  width="60%" height="30%" alt="Demo"/>
+<img width="360" alt="image" src="https://github.com/aguschin/art-guide/assets/6797716/2f668aba-963c-44be-81fb-97d91e67aeb9">
 
 Try it out: https://t.me/harbour_art_guide_bot
 
