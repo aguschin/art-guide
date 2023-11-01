@@ -22,19 +22,18 @@ We developed this project during [the class in Harbour.Space](https://harbour.sp
 ### Image Cropper
 This module is in charge of segmenting the image and cropping the relevant part of the image (for e.g. the painting in the image).
 
-
-You can go [here](image_crop_module/README.md) for more details about the image crop module.
+You can go [here](image_crop_module/README.md) for more details about the image crop module or read [this blog post](https://medium.com/@mjason98/paintings-extraction-from-images-art-guide-6002a749593e).
 
 
 ### Reverse Image Search
 This module is in charge of finding the most similar image to the input image in the database and return the relevant information about the image.
 
-You can go [here](reverse_image_search_module/README.md) for more details about the reverse image search module.
+You can go [here](reverse_image_search_module/README.md) for more details about the reverse image search module or read [this blog post](https://medium.com/@mohammadsanaee.n/your-ai-art-assistant-art-guide-9151433ab40a).
 
 
 ### Description Generation
 This module receives the relevant information of the found image and generates a description of the image, in a specific format.
-You can go [here](descriptor_module/README.md) for more details about the descriptor module.
+You can go [here](descriptor_module/README.md) for more details about the descriptor module or read [this blog post](https://medium.com/@ddunebari/your-guide-in-the-world-of-art-your-ai-museum-guide-1a087a132146).
 
 
 ### Text to Speech
