@@ -13,7 +13,7 @@ def send_welcome(message):
     text = \
 """
     Hi. This bot will accept an image of a painting and it will send you back an audio and text with a description of it, talking about its name, author, date, etc.\n\
-    
+
     To use it, just upload an image and you will receive the audio and text.\n\
 """
 
@@ -35,6 +35,13 @@ def handle_image(message):
 
     response = requests.get("http://localhost:8000/process_image/", json={'filename': filename, 'photo_url': photo_url})
 
+    # some information for debug
+    img_crp = response.json().get('cropped_img')
+    kn_distance = response.json().get('distance')
+
+    bot.send_message(message.chat.id, f'DB: Distance {kn_distance}')
+    bot.send_photo(message.chat.id, img_crp)
+
     if response.json().get('error'):
         print("Error:", response.json().get('error'))
         bot.send_message(message.chat.id, response.json().get('error'))
@@ -49,6 +56,6 @@ def handle_image(message):
     else:
         print(response.content)
         print("Error calling API.")
-    
+
 
 bot.infinity_polling()
