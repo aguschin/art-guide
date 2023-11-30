@@ -4,6 +4,7 @@ from .resnet18 import img2vec
 import numpy as np
 import pandas as pd
 import torchvision.transforms as transforms
+from PIL import Image
 
 # Load all embeddings from the .npy filessssssssssssssssssss
 all_embeddings = np.load('./data/embeddings.npy')
@@ -60,6 +61,8 @@ def change_format(data):
 
 
 def find_index_from_image(img, n):
+    if isinstance(img, np.ndarray):
+        img = Image.fromarray((img * 255).astype(np.uint8))
     tra = transforms.Compose([transforms.Resize((224, 224))])
     img = tra(img)
     vector = img2vec.getVectors(img)
