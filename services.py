@@ -7,33 +7,32 @@ from reverse_image_search_module.search_image import find_image
 from image_crop_module.croper import crop_image
 
 # plt
-import matplotlib.pyplot as plt
+import numpy as np
+import json
+
+def get_image_name_from_url(image_url):
+    image_name = image_url.split("/")[-1]
+    return image_name
 
 
 def run_all_models(filename, photo_url):
     image = Image.open(requests.get(photo_url, stream=True).raw)
 
-    # todo delete
-    plt.imsave('cache/im1.png', image)
-
     cropped_image = crop_image(image)
-
-    plt.imsave('cache/im2.png', crop_image)
-
-    # only to debug
 
     _, distance, metadata = find_image(cropped_image)
 
     # save some steps to debug
-    image_filename = f'cache/cropped_{photo_url}'
+    image_filename = 'cache/cropped_'+get_image_name_from_url(photo_url)
 
-    pil_img = Image.fromarray(cropped_image)
+    pil_img = Image.fromarray((cropped_image * 255).astype(np.uint8))
     pil_img.save(image_filename)
 
     if distance < 0.9:
         return {'error': "Sorry, I couldn't find a match for that image.",
                 'distance': distance,
-                'cropped_img': image_filename}
+                'cropped_img': image_filename,
+                'metadata': json.dumps(metadata, indent=2)}
 
     description_text = describe(metadata)['description']
 
@@ -46,4 +45,5 @@ def run_all_models(filename, photo_url):
     return {'audio_filename': filename,
             'error': None,
             'cropped_img': image_filename,
-            'distance': distance}
+            'distance': distance,
+            'metadata': json.dumps(metadata, indent=2)}

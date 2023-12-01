@@ -29,7 +29,6 @@ def handle_image(message):
 
     # Construct the URL for downloading the photo
     photo_url = f"https://api.telegram.org/file/bot{TELEGRAM_TOKEN}/{file_info.file_path}"
-    print("URL:", photo_url)
 
     filename = str(message.chat.username) + "_" + str(message.chat.id) + "_" + str(message.id) + ".mp3"
 
@@ -38,9 +37,14 @@ def handle_image(message):
     # some information for debug
     img_crp = response.json().get('cropped_img')
     kn_distance = response.json().get('distance')
+    metadata = response.json().get('metadata')
 
     bot.send_message(message.chat.id, f'DB: Distance {kn_distance}')
-    bot.send_photo(message.chat.id, img_crp)
+    bot.send_message(message.chat.id, f'DB: Metadata')
+    bot.send_message(message.chat.id, metadata)
+
+    with open(img_crp, 'rb') as photo_crp:
+        bot.send_photo(message.chat.id, photo=photo_crp, caption="DB: Cropped image")
 
     if response.json().get('error'):
         print("Error:", response.json().get('error'))
