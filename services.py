@@ -6,11 +6,19 @@ from text2speech_module.google_text_to_speech import text_to_audio
 from reverse_image_search_module.search_image import find_image
 from image_crop_module.croper import crop_image
 
+# plt
+import matplotlib.pyplot as plt
+
 
 def run_all_models(filename, photo_url):
     image = Image.open(requests.get(photo_url, stream=True).raw)
 
+    # todo delete
+    plt.imsave('cache/im1.png', image)
+
     cropped_image = crop_image(image)
+
+    plt.imsave('cache/im2.png', crop_image)
 
     # only to debug
 
