@@ -7,6 +7,7 @@ from decouple import config
 TELEGRAM_TOKEN = config("TELEGRAM_TOKEN")
 bot = TeleBot(token=TELEGRAM_TOKEN)
 
+DEBUG = bool(config("DEBUG"))
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
@@ -35,16 +36,17 @@ def handle_image(message):
     response = requests.get("http://localhost:8000/process_image/", json={'filename': filename, 'photo_url': photo_url})
 
     # some information for debug
-    img_crp = response.json().get('cropped_img')
-    kn_distance = response.json().get('distance')
-    metadata = response.json().get('metadata')
+    if DEBUG:
+        img_crp = response.json().get('cropped_img')
+        kn_distance = response.json().get('distance')
+        metadata = response.json().get('metadata')
 
-    bot.send_message(message.chat.id, f'DB: Distance {kn_distance}')
-    bot.send_message(message.chat.id, f'DB: Metadata')
-    bot.send_message(message.chat.id, metadata)
+        bot.send_message(message.chat.id, f'DB: Distance {kn_distance}')
+        bot.send_message(message.chat.id, f'DB: Metadata')
+        bot.send_message(message.chat.id, metadata)
 
-    with open(img_crp, 'rb') as photo_crp:
-        bot.send_photo(message.chat.id, photo=photo_crp, caption="DB: Cropped image")
+        with open(img_crp, 'rb') as photo_crp:
+            bot.send_photo(message.chat.id, photo=photo_crp, caption="DB: Cropped image")
 
     if response.json().get('error'):
         print("Error:", response.json().get('error'))
