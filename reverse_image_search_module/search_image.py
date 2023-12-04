@@ -86,12 +86,17 @@ def find_file_name(idx):
 
 
 def find_image(img, n=1):
+    if type(n) != int:
+        n = 1
+
     idx, dist = find_index_from_image(img, n)
 
-    file_n = find_file_name(idx[0])
+    file_n = find_file_name(idx)
 
-    matching_idx = dataset[dataset['file_name'] == file_n].index.values[0]
-    data = change_format(dataset.loc[matching_idx].to_dict())
-    if n == 1:
-        return idx[0], dist[0], data
+    selected_indices = dataset[dataset['file_name'].isin(file_n)].index.tolist()
+
+    selected_data = dataset.loc[ selected_indices ]
+
+    data = selected_data.apply(lambda row: change_format(row.to_dict()), axis=1).tolist()
+
     return idx, dist, data
