@@ -7,13 +7,14 @@ from decouple import config
 TELEGRAM_TOKEN = config("TELEGRAM_TOKEN")
 bot = TeleBot(token=TELEGRAM_TOKEN)
 
+DEBUG = bool(config("DEBUG"))
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
     text = \
 """
     Hi. This bot will accept an image of a painting and it will send you back an audio and text with a description of it, talking about its name, author, date, etc.\n\
-    
+
     To use it, just upload an image and you will receive the audio and text.\n\
 """
 
@@ -29,11 +30,23 @@ def handle_image(message):
 
     # Construct the URL for downloading the photo
     photo_url = f"https://api.telegram.org/file/bot{TELEGRAM_TOKEN}/{file_info.file_path}"
-    print("URL:", photo_url)
 
     filename = str(message.chat.username) + "_" + str(message.chat.id) + "_" + str(message.id) + ".mp3"
 
     response = requests.get("http://localhost:8000/process_image/", json={'filename': filename, 'photo_url': photo_url})
+
+    # some information for debug
+    if DEBUG:
+        img_crp = response.json().get('cropped_img')
+        kn_distance = response.json().get('distance')
+        metadata = response.json().get('metadata')
+
+        bot.send_message(message.chat.id, f'DB: Distance {kn_distance}')
+        bot.send_message(message.chat.id, f'DB: Metadata')
+        bot.send_message(message.chat.id, metadata)
+
+        with open(img_crp, 'rb') as photo_crp:
+            bot.send_photo(message.chat.id, photo=photo_crp, caption="DB: Cropped image")
 
     if response.json().get('error'):
         print("Error:", response.json().get('error'))
@@ -49,6 +62,6 @@ def handle_image(message):
     else:
         print(response.content)
         print("Error calling API.")
-    
+
 
 bot.infinity_polling()
