@@ -4,6 +4,9 @@ import torch
 import cv2
 import numpy as np
 import math
+from .cropper_utils import side_distance
+from .cropper_utils import find_aspect_ratio
+from .cropper_utils import find_width_height_aspect_ratio
 
 
 MODEL_NAME = "nvidia/segformer-b0-finetuned-ade-512-512"
@@ -13,13 +16,6 @@ processor = SegformerImageProcessor.from_pretrained(MODEL_NAME)
 model = SegformerForSemanticSegmentation.from_pretrained(MODEL_NAME)
 
 painting_id = 22
-
-
-def side_distance(p1, p2):
-    # euclidian
-    dd = (p1 - p2) ** 2
-    dd = dd.sum()
-    return dd
 
 
 def point_interseption(l1, l2):
@@ -275,4 +271,13 @@ def distortion_crop_image(image):
     # Apply the perspective warp to the image
     warped_image = cv2.warpPerspective(image_np, matrix, (OW, OH))
 
-    return warped_image, area_proportion
+    # Adjust aspect ratio of wraping
+    aspect_ratio = find_aspect_ratio(src_points)
+    wh_aa = find_width_height_aspect_ratio(src_points, aspect_ratio)
+
+    aa_width  = min(OW, OH)
+    aa_height = aa_width * wh_aa
+
+    resized_aa_image = cv2.resize(warped_image, (int(aa_width), int(aa_height)))
+
+    return resized_aa_image, area_proportion
