@@ -1,7 +1,8 @@
 # Image Croper Module
 
 This module is in charge of cropping and adjust the image to the object of interest, in this case it is a painting. In case there is no painting, it returns the original image.
-The legacy cropper description based on component can be found [here](CCROPER.md)
+The legacy cropper description based on component can be found [here](CCROPER.md).
+For more information, read this [medium post](https://medium.com/@mjason98/paintings-extraction-from-images-art-guide-6002a749593e) about this module.
 
 
 
@@ -61,7 +62,23 @@ A [huggingface segmenter](https://huggingface.co/nvidia/segformer-b0-finetuned-a
   </tr>
 </table>
 
+### Implementation Details
 
+The proportion issue:
+
+<table>
+  <tr>
+  <td>Original</td> <td>only distortion</td> <td>with aspect ratio</td>
+  </tr>
+  <tr>
+    <td><img src="images/aao.png" alt="Image 1"></td>
+    <td><img src="images/aad.png" alt="Image 2"></td>
+    <td><img src="images/aaa.png" alt="Image 3"></td>
+  </tr>
+  <tr>
+</table>
+
+To solve this, a way was found to take into account polygon rotation and aspect ratio at the same time. The four points of the polygon are taken and the covariance matrix is calculated. Then to this 2x2 matrix, the eigenvalues are found, with which the aspect ratio is calculated.
 
 ## Technical details
 
