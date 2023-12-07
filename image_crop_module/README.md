@@ -73,7 +73,7 @@ The proportion issue:
   <tr>
     <td><img src="images/aao.png" alt="Image 1"></td>
     <td><img src="images/aad.png" alt="Image 2"></td>
-    <td><img src="images/aaa.png" alt="Image 3"></td>
+    <td><img src="images/aaa.jpg" alt="Image 3"></td>
   </tr>
   <tr>
 </table>
