@@ -91,7 +91,7 @@ def make_points(point1, point2, weight, height):
 
 def gen_multi_cropping(weight, height, k=6, min_size_random=128):
     '''
-        5 default croppings are made by hand, the rest are random
+        6 default croppings are made by hand, the rest are random
     '''
 
     DEFAULT_CROPP = [
@@ -156,13 +156,13 @@ def extract_and_save_embeddings_multiple(input_folder, output_file, k=6):
 
 
 if __name__ == "__main__":
-    IMAGE_FOLDER = 'image_search_modified'
+    IMAGE_FOLDER = 'data'
     
     if not os.path.isdir(IMAGE_FOLDER):
         os.mkdir(IMAGE_FOLDER)
     
     input_folder = 'data/img/full'
-    output_file = f'{IMAGE_FOLDER}/embeddings_full.pkl'
+    output_file = f'{IMAGE_FOLDER}/embeddings_full_multi.pkl'
     
     # extract_and_save_embeddings(input_folder, output_file)
     extract_and_save_embeddings_multiple(input_folder, output_file)

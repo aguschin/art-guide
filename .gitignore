@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 cache
+image_search_modified/*
 
 # C extensions
 *.so
