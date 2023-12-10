@@ -24,8 +24,8 @@ def single_embedding():
 
 def multi_embedding():
     input_file = 'image_search_modified/embeddings_full.pkl'
-    values_output_file = 'data/embeddings.npy'
-    keys_output_file = 'data/file_names.npy'
+    values_output_file = 'data/embeddings_multi.npy'
+    keys_output_file = 'data/file_names_multi.npy'
     
     with open(input_file, 'rb') as f:
         data_dict = pickle.load(f)
@@ -45,4 +45,5 @@ def multi_embedding():
 
 
 if __name__ == '__main__':
-    single_embedding()
+    # single_embedding()
+    multi_embedding()

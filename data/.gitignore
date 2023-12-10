@@ -9,3 +9,5 @@
 /file_names.npy
 /most_crop
 /most_no_crop
+/embeddings_multi.npy
+/file_names_multi.npy

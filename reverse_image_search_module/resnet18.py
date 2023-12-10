@@ -166,4 +166,5 @@ if __name__ == "__main__":
     input_folder = 'data/img/full'
     output_file = f'{IMAGE_FOLDER}/embeddings_full.pkl'
     
+    # extract_and_save_embeddings(input_folder, output_file)
     extract_and_save_embeddings_multiple(input_folder, output_file)
