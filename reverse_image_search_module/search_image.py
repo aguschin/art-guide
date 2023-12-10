@@ -7,9 +7,9 @@ import torchvision.transforms as transforms
 from PIL import Image
 
 # Load all embeddings from the .npy filessssssssssssssssssss
-all_embeddings = np.load('./data/embeddings.npy')
+all_embeddings = np.load('./data/embeddings_multi.npy')
 embedding_dim = all_embeddings.shape[2]
-file_names = np.load('./data/file_names.npy')
+file_names = np.load('./data/file_names_multi.npy')
 
 # Build Annoy index
 # using dot, while assuming the vectors are normalized

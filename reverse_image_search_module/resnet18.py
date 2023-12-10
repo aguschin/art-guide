@@ -146,8 +146,6 @@ def extract_and_save_embeddings_multiple(input_folder, output_file, k=6):
         except Exception as e:
             print(f"Skipping image: {image_file} - Error: {str(e)}")
             failed += 1
-        
-        break
 
     with open(output_file, 'wb') as output_f:
         pickle.dump(embeddings_dict, output_f)
