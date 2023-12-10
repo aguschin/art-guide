@@ -4,6 +4,8 @@ import random
 from PIL import Image
 from ..search_image import find_index_from_image, find_file_name
 import logging
+import matplotlib.pyplot as plt
+from datetime import datetime
 
 
 logging.basicConfig(level=logging.INFO)
@@ -30,6 +32,8 @@ def get_image_matching(image_names):
     positive = 0
     not_a_match = 0
 
+    probs = []
+
     for _im in image_names:
         try:
             image = Image.open(os.path.join(DATA_IMAGES_PATH, _im))
@@ -40,7 +44,8 @@ def get_image_matching(image_names):
             mylogger.info(str(ex))
             continue
         
-        found_one = False
+        matching_rate = 0
+
         for x_ini, y_ini, x_end, y_end in random_cropping(255,255, 200, K_CROPPING):
             image_croped = image.crop((x_ini, y_ini, x_end, y_end))
 
@@ -51,26 +56,41 @@ def get_image_matching(image_names):
 
             if file_name == _im:
                 positive += 1
-                found_one = True
+                matching_rate += 1
         
-        if not found_one:
+        if matching_rate == 0:
             not_a_match += 1
             # Uncomment this if need it
             # mylogger.info(f"Not a match in {K_CROPPING} <original>{_im}")
+        
+        matching_rate /= K_CROPPING
+        probs.append(matching_rate)
 
-    return positive, not_a_match
+    return positive, not_a_match, probs
 
 
 def test_random_cropp_many_one_images():
     images_names = os.listdir(DATA_IMAGES_PATH)
     images_names = images_names[:100]
 
-    positive, not_a_match = get_image_matching(images_names)
+    positive, not_a_match, probs = get_image_matching(images_names)
 
     acc = positive / (100 * K_CROPPING)
     not_a_match /= 100
 
     mylogger.info(f"MultiCropping: many to one: ACCURACY = {acc} K = {K_CROPPING} Not a Match = {not_a_match}")
+
+    current_time = datetime.now()
+    time_string = current_time.strftime("%Y%m%d_%H%M%S")
+    filename = f"test_multi_to_one_histogram_{time_string}.png"
+    
+    plt.hist(probs, bins=30, color='blue', edgecolor='black')
+    plt.xlabel('Values')
+    plt.ylabel('Frequency')
+    plt.title('Histogram of Acc per picture')
+    plt.savefig(filename)
+
+    mylogger.info(filename)
 
     # todo Add correct assert,
     assert True

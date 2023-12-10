@@ -85,11 +85,11 @@ def extract_and_save_embeddings(input_folder, output_file):
     print(f"Failed images: {failed}")
 
 
-def make_points(point1, point2, weight, height):
-    return point1[0]*weight, point1[1]*height, point2[0]*weight, point2[1]*height
+def make_points(point1, point2, width, height):
+    return point1[0]*width, point1[1]*height, point2[0]*width, point2[1]*height
 
 
-def gen_multi_cropping(weight, height, k=6, min_size_random=128):
+def gen_multi_cropping(width, height, k=6, min_size_random=128):
     '''
         6 default croppings are made by hand, the rest are random
     '''
@@ -106,12 +106,12 @@ def gen_multi_cropping(weight, height, k=6, min_size_random=128):
     for i in range(k):
         if i < 6:
             default_points = DEFAULT_CROPP[i]
-            x, y, xend, yend = make_points(default_points[0], default_points[1], weight, height)
+            x, y, xend, yend = make_points(default_points[0], default_points[1], width, height)
         else:
-            x = random.randint(0, weight - min_size_random)
+            x = random.randint(0, width - min_size_random)
             y = random.randint(0, height - min_size_random)
 
-            xend = random.randint(x + min_size_random, weight)
+            xend = random.randint(x + min_size_random, width)
             yend = random.randint(y + min_size_random, height)
 
         yield x, y, xend, yend
