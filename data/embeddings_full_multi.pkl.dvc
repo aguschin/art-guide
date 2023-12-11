@@ -1,0 +1,5 @@
+outs:
+- md5: fc659cbffad193706ef90afcd62db41d
+  size: 12556806
+  hash: md5
+  path: embeddings_full_multi.pkl
