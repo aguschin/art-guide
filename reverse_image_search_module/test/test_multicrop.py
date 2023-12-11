@@ -84,7 +84,7 @@ def test_random_cropp_many_one_images():
     time_string = current_time.strftime("%Y%m%d_%H%M%S")
     filename = f"test_multi_to_one_histogram_{time_string}.png"
     
-    plt.hist(probs, bins=30, color='blue', edgecolor='black')
+    plt.hist(probs, bins=20, color='blue', edgecolor='black')
     plt.xlabel('Values')
     plt.ylabel('Frequency')
     plt.title('Histogram of Acc per picture')

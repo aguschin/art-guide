@@ -23,7 +23,7 @@ def single_embedding():
 
 
 def multi_embedding():
-    input_file = 'image_search_modified/embeddings_full.pkl'
+    input_file = 'data/embeddings_full_multi.pkl'
     values_output_file = 'data/embeddings_multi.npy'
     keys_output_file = 'data/file_names_multi.npy'
     
