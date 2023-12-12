@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import torchvision.transforms as transforms
 from PIL import Image
+from collections import Counter
+
 
 # Load all embeddings from the .npy filessssssssssssssssssss
 all_embeddings = np.load('./data/embeddings_multi.npy')
@@ -79,6 +81,15 @@ def find_index_from_image(img, n):
                                               include_distances=True)
 
     return idx, dist
+
+
+def find_repeating_index(idx, dist):
+    counter = Counter(idx)
+    most_common, _ = max(counter.items(), key=lambda x: x[1])
+
+    distances = [d for v, d in zip(idx, dist) if v == most_common]
+
+    return most_common, distances
 
 
 def find_file_name(idx):
