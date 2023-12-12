@@ -1,0 +1,12 @@
+[2023-08-18 13:54:02 +0300] [4686] [INFO] Starting gunicorn 21.2.0
+[2023-08-18 13:54:02 +0300] [4686] [ERROR] Connection in use: ('127.0.0.1', 8000)
+[2023-08-18 13:54:02 +0300] [4686] [ERROR] Retrying in 1 second.
+[2023-08-18 13:54:03 +0300] [4686] [ERROR] Connection in use: ('127.0.0.1', 8000)
+[2023-08-18 13:54:03 +0300] [4686] [ERROR] Retrying in 1 second.
+[2023-08-18 13:54:04 +0300] [4686] [ERROR] Connection in use: ('127.0.0.1', 8000)
+[2023-08-18 13:54:04 +0300] [4686] [ERROR] Retrying in 1 second.
+[2023-08-18 13:54:05 +0300] [4686] [ERROR] Connection in use: ('127.0.0.1', 8000)
+[2023-08-18 13:54:05 +0300] [4686] [ERROR] Retrying in 1 second.
+[2023-08-18 13:54:06 +0300] [4686] [ERROR] Connection in use: ('127.0.0.1', 8000)
+[2023-08-18 13:54:06 +0300] [4686] [ERROR] Retrying in 1 second.
+[2023-08-18 13:54:07 +0300] [4686] [ERROR] Can't connect to ('127.0.0.1', 8000)
