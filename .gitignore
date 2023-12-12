@@ -7,6 +7,7 @@ cache
 image_search_modified/*
 
 *histogram*.png
+*.out
 
 # C extensions
 *.so
