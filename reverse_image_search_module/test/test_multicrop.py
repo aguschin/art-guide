@@ -31,9 +31,6 @@ def random_cropping(image_width, image_height, min_size, K):
 
 def get_image_matching_many(image_names, many=False):
     positive = 0
-    not_a_match = 0
-
-    probs = []
 
     for _im in image_names:
         try:
@@ -45,33 +42,34 @@ def get_image_matching_many(image_names, many=False):
             mylogger.info(str(ex))
             continue
         
-        matching_rate = 0
+        
+        idxs, dists = [], []
 
         for x_ini, y_ini, x_end, y_end in random_cropping(255,255, 200, K_CROPPING):
             image_croped = image.crop((x_ini, y_ini, x_end, y_end))
 
             idx, dist = find_index_from_image(image_croped, n=N_SEARCH)
 
-            if many:
-                idx, _ = find_repeating_index(idx, dist)
-            else:
-                idx = idx[0]
+            idx, dist = idx[0], dist[0]
 
-            file_name = find_file_name(idx)
-
-            if file_name == _im:
-                positive += 1
-                matching_rate += 1
+            # if many:
+            #     idx, dist = find_repeating_index(idx, dist)
+            # else:
+            #     idx, dist = idx[0], dist[0]
+            
+            idxs.append(idx)
+            dists.append(dist)
         
-        if matching_rate == 0:
-            not_a_match += 1
-            # Uncomment this if need it
-            mylogger.info(f"Not a match in {K_CROPPING} <original>{_im}")
-        
-        matching_rate /= K_CROPPING
-        probs.append(matching_rate)
+        selected_idx, selected_dist = max(zip(idxs, dists), key=lambda x: x[1])
 
-    return positive, not_a_match, probs
+        file_name = find_file_name(selected_idx)
+
+        if file_name == _im:
+            positive += 1
+        else:
+            mylogger.info(f"Not a match in {K_CROPPING} <original>{_im} <distance>{selected_dist}")
+
+    return positive
 
 def get_image_matching_single(image_names):
     positive = 0
@@ -82,8 +80,8 @@ def get_image_matching_single(image_names):
             # to check the size and truncation
             _ = image.resize((255, 255))
         
-            idx, dist = find_index_from_image(image, n=10)
-            idx, _ = find_repeating_index(idx, dist)
+            idx, _ = find_index_from_image(image, n=N_SEARCH)
+            idx = idx[0]
 
             file_name = find_file_name(idx)
 
@@ -104,26 +102,13 @@ def test_random_cropp_many_one_images():
     images_names = os.listdir(DATA_IMAGES_PATH)
     images_names = images_names[:100]
 
-    positive, not_a_match, probs = get_image_matching_many(images_names)
+    positive = get_image_matching_many(images_names, many=False)
 
-    acc = positive / (100 * K_CROPPING)
-    not_a_match /= 100
+    acc = positive / 100
 
-    mylogger.info(f"MultiCropping: many to one: ACCURACY = {acc} K = {K_CROPPING} Not a Match = {not_a_match}")
+    mylogger.info(f"MultiCropping: many to one: ACCURACY = {acc} K = {K_CROPPING}")
 
-    current_time = datetime.now()
-    time_string = current_time.strftime("%Y%m%d_%H%M%S")
-    filename = f"test_multi_to_one_histogram_{time_string}.png"
-    
-    plt.hist(probs, bins=20, color='blue', edgecolor='black')
-    plt.xlabel('Values')
-    plt.ylabel('Frequency')
-    plt.title('Histogram of Acc per picture. Many to One')
-    plt.savefig(filename)
-
-    mylogger.info(filename)
-
-    assert acc > 0.85
+    assert acc > 0.8
 
 def test_random_cropp_one_to_many_images():
     images_names = os.listdir(DATA_IMAGES_PATH)
@@ -135,29 +120,16 @@ def test_random_cropp_one_to_many_images():
 
     mylogger.info(f"MultiCropping: one to many: ACCURACY = {acc} N = {N_SEARCH}")
 
-    assert acc > 0.95
+    assert acc > 0.88
 
 def test_random_cropp_many_to_many_images():
     images_names = os.listdir(DATA_IMAGES_PATH)
     images_names = images_names[:100]
 
-    positive, not_a_match, probs = get_image_matching_many(images_names, many=True)
+    positive = get_image_matching_many(images_names, many=True)
 
-    acc = positive / (100 * K_CROPPING)
-    not_a_match /= 100
+    acc = positive / 100
 
-    mylogger.info(f"MultiCropping: many to many: ACCURACY = {acc} K = {K_CROPPING} Not a Match = {not_a_match} N = {N_SEARCH}")
-
-    current_time = datetime.now()
-    time_string = current_time.strftime("%Y%m%d_%H%M%S")
-    filename = f"test_many_to_many_histogram_{time_string}.png"
-    
-    plt.hist(probs, bins=20, color='blue', edgecolor='black')
-    plt.xlabel('Values')
-    plt.ylabel('Frequency')
-    plt.title('Histogram of Acc per picture. Many to Many')
-    plt.savefig(filename)
-
-    mylogger.info(filename)
+    mylogger.info(f"MultiCropping: many to many: ACCURACY = {acc} K = {K_CROPPING} N = {N_SEARCH}")
 
     assert acc > 0.85

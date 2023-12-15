@@ -84,13 +84,53 @@ def find_index_from_image(img, n):
 
 
 def find_repeating_index(idx, dist):
-    counter = Counter(idx)
-    most_common, _ = max(counter.items(), key=lambda x: x[1])
+    counter = {}
 
-    distances = [d for v, d in zip(idx, dist) if v == most_common]
+    for ide, distance in zip(idx, dist):
+        if counter.get(ide, None) is None:
+            record = [distance, 1]
+        else:
+            record = counter[ide]
+            record[0] += 1.0 /distance
+            record[1] += 1
 
-    return most_common, distances
+        counter.update({ide: record})
 
+    max_distance, max_ide = None, None
+    for k,v in counter.items():
+        # harmonic mean
+        distance = v[1] / v[0]
+        
+        if max_distance is None or max_distance < distance:
+            max_distance = distance
+            max_ide = k
+        
+    return max_ide, max_distance
+
+def select_repeating_index(idx, dist, metadata):
+    counter = {}
+
+    for ide, distance, mtd in zip(idx, dist, metadata):
+        if counter.get(ide, None) is None:
+            record = [distance, 1, mtd]
+        else:
+            record = counter[ide]
+            record[0] += distance
+            record[1] += 1
+
+        counter.update({ide: record})
+
+    max_distance, max_ide, mtdta = None, None, None
+    for k,v in counter.items():
+        # harmonic mean
+        distance = v[1] / v[0]
+        
+        if max_distance is None or max_distance < distance:
+            max_distance = distance
+            max_ide = k
+            mtdta = v[2]
+        
+    return max_ide, max_distance, mtdta
 
 def find_file_name(idx):
     return file_names[idx]
