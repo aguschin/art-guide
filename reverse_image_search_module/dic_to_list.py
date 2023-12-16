@@ -1,5 +1,9 @@
 import pickle
 import numpy as np
+from decouple import config
+
+
+MULTI_EMBEDDINGS = bool(config('MULTI_EMBEDDINGS'))
 
 
 def single_embedding():
@@ -45,5 +49,7 @@ def multi_embedding():
 
 
 if __name__ == '__main__':
-    # single_embedding()
-    multi_embedding()
+    if MULTI_EMBEDDINGS:
+        multi_embedding()
+    else:
+        single_embedding()

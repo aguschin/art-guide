@@ -8,9 +8,12 @@ from PIL import Image
 import pickle
 import random
 from tqdm import tqdm
+from decouple import config
+
+
+MULTI_EMBEDDINGS = bool(config('MULTI_EMBEDDINGS'))
 
 torch.manual_seed(17)
-
 
 class Img2VecResnet18():
     def __init__(self, batch_size=64):
@@ -162,7 +165,10 @@ if __name__ == "__main__":
         os.mkdir(IMAGE_FOLDER)
     
     input_folder = 'data/img/full'
-    output_file = f'{IMAGE_FOLDER}/embeddings_full_multi.pkl'
-    
-    # extract_and_save_embeddings(input_folder, output_file)
-    extract_and_save_embeddings_multiple(input_folder, output_file)
+
+    if MULTI_EMBEDDINGS:
+        output_file = f'{IMAGE_FOLDER}/embeddings_full_multi.pkl'
+        extract_and_save_embeddings_multiple(input_folder, output_file)
+    else:
+        output_file = f'{IMAGE_FOLDER}/embeddings_full.pkl'
+        extract_and_save_embeddings(input_folder, output_file)

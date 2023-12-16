@@ -1,17 +1,19 @@
 from annoy import AnnoyIndex
 import ast
-from .resnet18 import img2vec
+from .resnet18 import img2vec, MULTI_EMBEDDINGS
 import numpy as np
 import pandas as pd
 import torchvision.transforms as transforms
 from PIL import Image
-from collections import Counter
 
 
-# Load all embeddings from the .npy filessssssssssssssssssss
-all_embeddings = np.load('./data/embeddings_multi.npy')
+EMBEDDINGS_PATH = './data/embeddings_multi.npy' if MULTI_EMBEDDINGS else './data/embeddings.npy'
+EMBEDDINGS_FILENAME_PATH = './data/file_names_multi.npy' if MULTI_EMBEDDINGS else './data/file_names.npy'
+
+
+all_embeddings = np.load(EMBEDDINGS_PATH)
 embedding_dim = all_embeddings.shape[2]
-file_names = np.load('./data/file_names_multi.npy')
+file_names = np.load(EMBEDDINGS_FILENAME_PATH)
 
 # Build Annoy index
 # using dot, while assuming the vectors are normalized
@@ -81,56 +83,6 @@ def find_index_from_image(img, n):
                                               include_distances=True)
 
     return idx, dist
-
-
-def find_repeating_index(idx, dist):
-    counter = {}
-
-    for ide, distance in zip(idx, dist):
-        if counter.get(ide, None) is None:
-            record = [distance, 1]
-        else:
-            record = counter[ide]
-            record[0] += 1.0 /distance
-            record[1] += 1
-
-        counter.update({ide: record})
-
-    max_distance, max_ide = None, None
-    for k,v in counter.items():
-        # harmonic mean
-        distance = v[1] / v[0]
-        
-        if max_distance is None or max_distance < distance:
-            max_distance = distance
-            max_ide = k
-        
-    return max_ide, max_distance
-
-def select_repeating_index(idx, dist, metadata):
-    counter = {}
-
-    for ide, distance, mtd in zip(idx, dist, metadata):
-        if counter.get(ide, None) is None:
-            record = [distance, 1, mtd]
-        else:
-            record = counter[ide]
-            record[0] += distance
-            record[1] += 1
-
-        counter.update({ide: record})
-
-    max_distance, max_ide, mtdta = None, None, None
-    for k,v in counter.items():
-        # harmonic mean
-        distance = v[1] / v[0]
-        
-        if max_distance is None or max_distance < distance:
-            max_distance = distance
-            max_ide = k
-            mtdta = v[2]
-        
-    return max_ide, max_distance, mtdta
 
 def find_file_name(idx):
     return file_names[idx]

@@ -1,11 +1,8 @@
 import os
-import numpy as np
 import random
 from PIL import Image
-from ..search_image import find_index_from_image, find_file_name, find_repeating_index
+from ..search_image import find_index_from_image, find_file_name
 import logging
-import matplotlib.pyplot as plt
-from datetime import datetime
 
 
 logging.basicConfig(level=logging.INFO)
@@ -29,7 +26,7 @@ def random_cropping(image_width, image_height, min_size, K):
         yield x_ini, y_ini, x_end, y_end
 
 
-def get_image_matching_many(image_names, many=False):
+def get_image_matching_many(image_names):
     positive = 0
 
     for _im in image_names:
@@ -49,13 +46,7 @@ def get_image_matching_many(image_names, many=False):
             image_croped = image.crop((x_ini, y_ini, x_end, y_end))
 
             idx, dist = find_index_from_image(image_croped, n=N_SEARCH)
-
             idx, dist = idx[0], dist[0]
-
-            # if many:
-            #     idx, dist = find_repeating_index(idx, dist)
-            # else:
-            #     idx, dist = idx[0], dist[0]
             
             idxs.append(idx)
             dists.append(dist)
