@@ -6,10 +6,9 @@ from decouple import config
 MULTI_EMBEDDINGS = bool(config('MULTI_EMBEDDINGS'))
 
 
-def single_embedding():
-    input_file = '../data/embeddings_full.pkl'
-    values_output_file = '../data/embeddings.npy'
-    keys_output_file = '../data/file_names.npy'
+def single_embedding(input_file = '../data/embeddings_full.pkl',
+                     values_output_file = '../data/embeddings.npy',
+                     keys_output_file = '../data/file_names.npy'):
 
     with open(input_file, 'rb') as f:
         data_dict = pickle.load(f)
@@ -26,10 +25,9 @@ def single_embedding():
     np.save(values_output_file, values_array)
 
 
-def multi_embedding():
-    input_file = 'data/embeddings_full_multi.pkl'
-    values_output_file = 'data/embeddings_multi.npy'
-    keys_output_file = 'data/file_names_multi.npy'
+def multi_embedding(input_file = 'data/embeddings_full_multi.pkl', 
+                    values_output_file = 'data/embeddings_multi.npy',
+                    keys_output_file = 'data/file_names_multi.npy'):
     
     with open(input_file, 'rb') as f:
         data_dict = pickle.load(f)
