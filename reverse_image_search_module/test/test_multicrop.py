@@ -2,6 +2,7 @@ import os
 import random
 from PIL import Image
 from ..search_image import find_index_from_image, find_file_name
+from ..resnet18 import gen_multi_cropping
 import logging
 
 
@@ -13,18 +14,6 @@ DATA_IMAGES_PATH = 'data/img/full/'
 K_CROPPING = 10
 N_SEARCH = 10
 IMAGE_MAX_NUMBER = 5000
-
-
-def random_cropping(image_width, image_height, min_size, K):
-    for _ in range(K):
-        x_ini = random.randint(0, image_width - min_size)
-        y_ini = random.randint(0, image_height - min_size)
-
-        x_end = random.randint(x_ini + min_size, image_width)
-        y_end = random.randint(y_ini + min_size, image_height)
-
-        yield x_ini, y_ini, x_end, y_end
-
 
 def get_image_matching_many(image_names):
     positive = 0
@@ -42,7 +31,7 @@ def get_image_matching_many(image_names):
         
         idxs, dists = [], []
 
-        for x_ini, y_ini, x_end, y_end in random_cropping(255,255, 200, K_CROPPING):
+        for x_ini, y_ini, x_end, y_end in gen_multi_cropping(image.width, image.height, K_CROPPING):
             image_croped = image.crop((x_ini, y_ini, x_end, y_end))
 
             idx, dist = find_index_from_image(image_croped, n=N_SEARCH)
@@ -94,13 +83,13 @@ def test_random_cropp_many_one_images():
     images_names = os.listdir(DATA_IMAGES_PATH)
     images_names = images_names[:100]
 
-    positive = get_image_matching_many(images_names, many=False)
+    positive = get_image_matching_many(images_names)
 
     acc = positive / 100
 
     mylogger.info(f"MultiCropping: many to one: ACCURACY = {acc} K = {K_CROPPING}")
 
-    assert acc > 0.78
+    assert acc > 0.99
 
 def test_random_cropp_one_to_many_images():
     images_names = os.listdir(DATA_IMAGES_PATH)
@@ -118,13 +107,13 @@ def test_random_cropp_many_to_many_images():
     images_names = os.listdir(DATA_IMAGES_PATH)
     images_names = images_names[:100]
 
-    positive = get_image_matching_many(images_names, many=True)
+    positive = get_image_matching_many(images_names)
 
     acc = positive / 100
 
     mylogger.info(f"MultiCropping: many to many: ACCURACY = {acc} K = {K_CROPPING} N = {N_SEARCH}")
 
-    assert acc > 0.85
+    assert acc > 0.99
 
 
 def test_random_cropp_one_to_many_distance9_images():
