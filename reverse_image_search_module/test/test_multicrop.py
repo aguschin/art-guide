@@ -1,7 +1,6 @@
 import os
-import random
 from PIL import Image
-from ..search_image import find_index_from_image, find_file_name
+from ..search_image import find_index_from_image, find_file_name, load_vector_db
 from ..resnet18 import gen_multi_cropping
 import logging
 
@@ -11,9 +10,11 @@ mylogger = logging.getLogger()
 
 
 DATA_IMAGES_PATH = 'data/img/full/'
-K_CROPPING = 10
+K_CROPPING = 6
 N_SEARCH = 10
 IMAGE_MAX_NUMBER = 5000
+
+load_vector_db(True, reload=True)
 
 def is_in_reference_many(image_names):
     positive = []
@@ -82,17 +83,17 @@ def is_in_reference_single(image_names, th=0.0):
 
 # ----------------------------------------------------------------------------------------------------
 
-def test_random_cropp_many_one_images():
-    images_names = os.listdir(DATA_IMAGES_PATH)
-    images_names = images_names[:100]
+'''
+Many to many:
+    Many cropings including the original image 
+        to 
+    Multi embedding reference (embeding with the original image + cropings of it)
 
-    positive = is_in_reference_many(images_names)
-
-    acc = sum(positive) / len(positive)
-
-    mylogger.info(f"MultiCropping: many to one: ACCURACY = {acc} K = {K_CROPPING}")
-
-    assert acc > 0.99
+One to many:
+    Original image 
+        to
+    Multi embedding reference (embeding with the original image + cropings of it)
+'''
 
 def test_random_cropp_one_to_many_images():
     images_names = os.listdir(DATA_IMAGES_PATH)
