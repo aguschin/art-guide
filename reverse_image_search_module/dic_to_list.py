@@ -5,10 +5,18 @@ from decouple import config
 
 MULTI_EMBEDDINGS = bool(config('MULTI_EMBEDDINGS'))
 
+SINGLE_INPUT_FILE = config('SINGLE_INPUT_FILE')
+SINGLE_VALES_OUTPUT_FILE = config('SINGLE_VALES_OUTPUT_FILE')
+SINGLE_KEYS_OUTPUT_FILE = config('SINGLE_KEYS_OUTPUT_FILE')
 
-def single_embedding(input_file = '../data/embeddings_full.pkl',
-                     values_output_file = '../data/embeddings.npy',
-                     keys_output_file = '../data/file_names.npy'):
+MULTI_INPUT_FILE = config('MULTI_INPUT_FILE')
+MULTI_VALES_OUTPUT_FILE = config('MULTI_VALES_OUTPUT_FILE')
+MULTI_KEYS_OUTPUT_FILE = config('MULTI_KEYS_OUTPUT_FILE')
+
+
+def single_embedding(input_file = SINGLE_INPUT_FILE,
+                     values_output_file = SINGLE_VALES_OUTPUT_FILE,
+                     keys_output_file = SINGLE_KEYS_OUTPUT_FILE):
 
     with open(input_file, 'rb') as f:
         data_dict = pickle.load(f)
@@ -25,9 +33,9 @@ def single_embedding(input_file = '../data/embeddings_full.pkl',
     np.save(values_output_file, values_array)
 
 
-def multi_embedding(input_file = 'data/embeddings_full_multi.pkl', 
-                    values_output_file = 'data/embeddings_multi.npy',
-                    keys_output_file = 'data/file_names_multi.npy'):
+def multi_embedding(input_file = MULTI_INPUT_FILE, 
+                    values_output_file = MULTI_VALES_OUTPUT_FILE,
+                    keys_output_file = MULTI_KEYS_OUTPUT_FILE):
     
     with open(input_file, 'rb') as f:
         data_dict = pickle.load(f)
