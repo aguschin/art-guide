@@ -1,34 +1,15 @@
 from annoy import AnnoyIndex
 import ast
-from .resnet18 import img2vec
+from .resnet18 import img2vec, MULTI_EMBEDDINGS
 import numpy as np
 import pandas as pd
 import torchvision.transforms as transforms
 from PIL import Image
 
-# Load all embeddings from the .npy filessssssssssssssssssss
-all_embeddings = np.load('./data/embeddings.npy')
-embedding_dim = all_embeddings.shape[2]
-file_names = np.load('./data/file_names.npy')
 
-# Build Annoy index
-# using dot, while assuming the vectors are normalized
-annoy_index = AnnoyIndex(embedding_dim, metric='dot')
-
-for idx, vec in enumerate(all_embeddings):
-    vec = vec.squeeze()
-    vec = vec / np.linalg.norm(vec)
-    annoy_index.add_item(idx, vec)
-
-num_trees = 50
-annoy_index.build(num_trees)
-
-dataset = pd.read_csv('./data/data.csv',
-                      low_memory=False)
-dataset['images'].fillna('[]', inplace=True)
-
-dataset['images'] = dataset['images'].apply(ast.literal_eval)
-
+dataset = None
+annoy_index = None
+file_names = None
 
 def extract_file_name(x):
     if isinstance(x, list) and len(x) > 0:
@@ -36,9 +17,43 @@ def extract_file_name(x):
     else:
         return None
 
+def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False):
+    global dataset
+    global annoy_index
+    global file_names
 
-dataset['file_name'] = dataset['images'].apply(extract_file_name)
+    if dataset is not None and annoy_index is not None and \
+    file_names is not None and not reload:
+        return
 
+    embeddings_path = './data/embeddings_multi.npy' if multi else './data/embeddings.npy'
+    embeddings_filename_path = './data/file_names_multi.npy' if multi else './data/file_names.npy'
+
+    all_embeddings = np.load(embeddings_path)
+    embedding_dim = all_embeddings.shape[2]
+    file_names = np.load(embeddings_filename_path)
+
+    # Build Annoy index
+    # using dot, while assuming the vectors are normalized
+    annoy_index = AnnoyIndex(embedding_dim, metric='dot')
+
+    for idx, vec in enumerate(all_embeddings):
+        vec = vec.squeeze()
+        vec = vec / np.linalg.norm(vec)
+        annoy_index.add_item(idx, vec)
+
+    num_trees = 50
+    annoy_index.build(num_trees)
+
+    dataset = pd.read_csv('./data/data.csv',
+                        low_memory=False)
+    dataset['images'].fillna('[]', inplace=True)
+
+    dataset['images'] = dataset['images'].apply(ast.literal_eval)
+
+    dataset['file_name'] = dataset['images'].apply(extract_file_name)
+
+load_vector_db()
 
 def change_format(data):
     return {
@@ -79,7 +94,6 @@ def find_index_from_image(img, n):
                                               include_distances=True)
 
     return idx, dist
-
 
 def find_file_name(idx):
     return file_names[idx]
