@@ -140,8 +140,6 @@ def extract_and_save_embeddings_multiple(input_folder, output_file, k=6):
                 feature_vector = img2vec.getVectors(croped)
 
                 vectors.append(feature_vector)
-                # print(feature_vector.shape)
-                # assert False 
             
             embeddings_dict[image_file] = vectors
 
