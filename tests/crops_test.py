@@ -5,7 +5,6 @@ from reverse_image_search_module.search_image import find_image,find_file_name
 
 import os
 from PIL import Image
-
 def process_image(image_path):
     img = Image.open(image_path)
     cropped_image = crop_image(img)
