@@ -176,9 +176,7 @@ def find_best_contour(contours, W, H):
     selected = min(distances_and_areas,
                    key=lambda x: x[2] if x[1] >= area_threshold else 1e9)
 
-    convex_hull = cv2.convexHull(contours[selected[0]])
-
-    return convex_hull, selected[1]
+    return contours[selected[0]], selected[1]
 
 
 @torch.no_grad()
@@ -215,6 +213,7 @@ def distortion_crop_image(image):
         return np.array(image, dtype=np.float32) / 255.0, 1
 
     contour, raw_contour_area = find_best_contour(contours, IW, IH)
+    contour = cv2.convexHull(contour)
 
     # the area of the segemented area is too small
     if raw_contour_area < 500:

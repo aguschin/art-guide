@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import torchvision.transforms as transforms
 from PIL import Image
+from utils.vdb_slow import NearestVectorFinder
 
 
 dataset = None
@@ -17,7 +18,7 @@ def extract_file_name(x):
     else:
         return None
 
-def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False):
+def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=true):
     global dataset
     global annoy_index
     global file_names
@@ -33,17 +34,20 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False):
     embedding_dim = all_embeddings.shape[2]
     file_names = np.load(embeddings_filename_path)
 
-    # Build Annoy index
-    # using dot, while assuming the vectors are normalized
-    annoy_index = AnnoyIndex(embedding_dim, metric='dot')
+    if vdb:
+        # Build Annoy index
+        # using dot, while assuming the vectors are normalized
+        annoy_index = AnnoyIndex(embedding_dim, metric='dot')
 
-    for idx, vec in enumerate(all_embeddings):
-        vec = vec.squeeze()
-        vec = vec / np.linalg.norm(vec)
-        annoy_index.add_item(idx, vec)
+        for idx, vec in enumerate(all_embeddings):
+            vec = vec.squeeze()
+            vec = vec / np.linalg.norm(vec)
+            annoy_index.add_item(idx, vec)
 
-    num_trees = 50
-    annoy_index.build(num_trees)
+        num_trees = 50
+        annoy_index.build(num_trees)
+    else:
+        annoy_index = NearestVectorFinder(all_embeddings)
 
     dataset = pd.read_csv('./data/data.csv',
                         low_memory=False)
