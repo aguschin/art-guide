@@ -78,7 +78,7 @@ def test_utils_nearest_vector_finder():
 
     target_vector = np.ones((all_embeddings.shape[1]), dtype=np.float32)
 
-    idx, dist = nnvf.get_nns_by_vector(target_vector,
+    idx, _ = nnvf.get_nns_by_vector(target_vector,
                            k=1, 
                            search_k=-1, 
                            include_distances=True)
