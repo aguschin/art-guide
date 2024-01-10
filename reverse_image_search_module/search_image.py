@@ -1,6 +1,8 @@
 from annoy import AnnoyIndex
 import ast
 from .resnet18 import img2vec, MULTI_EMBEDDINGS
+from .resnet18 import SINGLE_VALES_OUTPUT_FILE, SINGLE_KEYS_OUTPUT_FILE
+from .resnet18 import MULTI_KEYS_OUTPUT_FILE, MULTI_VALES_OUTPUT_FILE
 import numpy as np
 import pandas as pd
 import torchvision.transforms as transforms
@@ -18,7 +20,7 @@ def extract_file_name(x):
     else:
         return None
 
-def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=False):
+def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=True):
     global dataset
     global annoy_index
     global file_names
@@ -27,14 +29,15 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=False):
     file_names is not None and not reload:
         return
 
-    embeddings_path = './data/embeddings_multi.npy' if multi else './data/embeddings.npy'
-    embeddings_filename_path = './data/file_names_multi.npy' if multi else './data/file_names.npy'
+    embeddings_path = MULTI_VALES_OUTPUT_FILE if multi else SINGLE_VALES_OUTPUT_FILE
+    embeddings_filename_path = MULTI_KEYS_OUTPUT_FILE if multi else SINGLE_KEYS_OUTPUT_FILE
 
     all_embeddings = np.load(embeddings_path)
     embedding_dim = all_embeddings.shape[2]
     file_names = np.load(embeddings_filename_path)
 
     if vdb:
+        print('Loaded annoy')
         # Build Annoy index
         # using dot, while assuming the vectors are normalized
         annoy_index = AnnoyIndex(embedding_dim, metric='dot')
@@ -47,6 +50,8 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=False):
         num_trees = 50
         annoy_index.build(num_trees)
     else:
+        print('Loaded memory intensive/slow vdb')
+
         annoy_index = NearestVectorFinder(all_embeddings)
 
     dataset = pd.read_csv('./data/data.csv',

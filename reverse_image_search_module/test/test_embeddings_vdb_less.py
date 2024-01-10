@@ -26,7 +26,7 @@ def get_image_idx_name_matching(images_names):
             mylogger.info(str(ex))
             continue
 
-        idx, dist = find_index_from_image(image, n=1)
+        idx, _ = find_index_from_image(image, n=1)
         idx = idx[0]
 
         file_name = find_file_name(idx)
@@ -48,4 +48,4 @@ def test_static_accuracy():
 
     mylogger.info(f"test_static_acc: ACCURACY = {acc}")
 
-    assert acc > 0.98
+    assert acc == 1.0

@@ -16,6 +16,13 @@ warnings.filterwarnings("ignore")
 
 MULTI_EMBEDDINGS = bool(config('MULTI_EMBEDDINGS'))
 
+SINGLE_VALES_OUTPUT_FILE = bool(config('SINGLE_VALES_OUTPUT_FILE'))
+SINGLE_KEYS_OUTPUT_FILE = bool(config('SINGLE_KEYS_OUTPUT_FILE'))
+
+MULTI_VALES_OUTPUT_FILE = bool(config('MULTI_VALES_OUTPUT_FILE'))
+MULTI_KEYS_OUTPUT_FILE = bool(config('MULTI_KEYS_OUTPUT_FILE'))
+
+
 torch.manual_seed(17)
 
 class Img2VecResnet18():
