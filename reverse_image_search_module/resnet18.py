@@ -9,7 +9,10 @@ import pickle
 import random
 from tqdm import tqdm
 from decouple import config
+import warnings
 
+# Disable all warnings
+warnings.filterwarnings("ignore")
 
 MULTI_EMBEDDINGS = bool(config('MULTI_EMBEDDINGS'))
 

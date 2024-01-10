@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import torchvision.transforms as transforms
 from PIL import Image
-from utils.vdb_slow import NearestVectorFinder
+from .utils.vdb_slow import NearestVectorFinder
 
 
 dataset = None
@@ -18,7 +18,7 @@ def extract_file_name(x):
     else:
         return None
 
-def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=true):
+def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=False):
     global dataset
     global annoy_index
     global file_names

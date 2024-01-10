@@ -1,11 +1,7 @@
 import os
-import numpy as np
-import random
 from PIL import Image
 from ..search_image import find_index_from_image, find_file_name, load_vector_db
 import logging
-from sklearn.metrics import precision_recall_curve
-from ..utils import make_syntetic_first_second_distances
 
 
 DATA_IMAGES_PATH = 'data/img/full/'
