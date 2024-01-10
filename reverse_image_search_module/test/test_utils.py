@@ -16,7 +16,7 @@ embeddings_path = './data/embeddings_multi.npy' if MULTI_EMBEDDINGS else './data
 all_embeddings = np.load(embeddings_path)
 
 
-def test_vector_norm():
+def test_nearest_vector_finder_norm():
     vectors = np.ones((5000,123))
     nnvf = NearestVectorFinder(vectors)
 
@@ -25,7 +25,7 @@ def test_vector_norm():
     assert np.alltrue(distance == np.ones_like(distance, dtype=np.float32))
 
 
-def test_vector_k1():
+def test_nearest_vector_finder_k1():
     vectors = np.ones((5000,123))
     nnvf = NearestVectorFinder(vectors)
 
@@ -49,7 +49,7 @@ def test_vector_k1():
     assert idx.shape[0] == 1
 
 
-def test_vector_k10():
+def test_nearest_vector_finder_k10():
     vectors = np.ones((5000,123))
     nnvf = NearestVectorFinder(vectors)
 
@@ -73,15 +73,14 @@ def test_vector_k10():
     assert idx.shape[0] == 10
 
 
+def test_utils_nearest_vector_finder():
+    nnvf = NearestVectorFinder(all_embeddings)
 
-# def test_utils_nearest_vector_finder():
-#     nnvf = NearestVectorFinder(all_embeddings)
+    target_vector = np.ones((all_embeddings.shape[1]), dtype=np.float32)
 
-#     target_vector = np.ones((all_embeddings.shape[1]), dtype=np.float32)
-
-#     idx, dist = nnvf.get_nns_by_vector(target_vector,
-#                            k=1, 
-#                            search_k=-1, 
-#                            include_distances=True)
-
+    idx, dist = nnvf.get_nns_by_vector(target_vector,
+                           k=1, 
+                           search_k=-1, 
+                           include_distances=True)
     
+    assert idx.dtype == np.int64
