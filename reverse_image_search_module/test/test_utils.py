@@ -62,6 +62,15 @@ def test_nearest_vector_finder_k10():
     assert idx.shape[0] == 10
 
 
+def test_nearest_vector_finder_non2dshape():
+    vectors = np.ones((5000,1,123))
+    
+    nnvf = NearestVectorFinder(vectors)
+
+    inner_shape = nnvf.vectors.shape 
+
+    assert len(inner_shape) == 2
+
 def test_utils_nearest_vector_finder():
     all_embeddings = np.load(embeddings_path)
 

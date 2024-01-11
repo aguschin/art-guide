@@ -12,8 +12,12 @@ def parallel_normalize(vectors):
 
 class NearestVectorFinder:
     def __init__(self, vectors):
+        after_squeeeze = len(vectors.shape) - sum([1 if val == 1 else 0 for val in vectors.shape])
+
+        assert after_squeeeze == 2, 'vectors shape most be NxM'
+        
         # vectors is a list of vectors you want to compare against
-        self.vectors = parallel_normalize(vectors)
+        self.vectors = parallel_normalize(vectors.squeeze())
         
     def get_nns_by_vector(self, target_vector, k=1, search_k=-1, include_distances=True):
         target_vector = target_vector.squeeze()
