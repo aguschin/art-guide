@@ -29,7 +29,13 @@ def get_image_idx_name_matching(images_names):
         idx, _ = find_index_from_image(image, n=1)
         idx = idx[0]
 
+        print(_im, idx)
+
+        # import ipdb
+        # ipdb.set_trace()
         file_name = find_file_name(idx)
+
+        # print(file_name)
 
         if file_name == _im:
             positive += 1
@@ -40,11 +46,11 @@ def get_image_idx_name_matching(images_names):
 
 def test_static_accuracy():
     images_names = os.listdir(DATA_IMAGES_PATH)
-    images_names = images_names[:100]
+    images_names = images_names[:3]
 
     positive = get_image_idx_name_matching(images_names)
 
-    acc = positive / 100
+    acc = positive / 3
 
     mylogger.info(f"test_static_acc: ACCURACY = {acc}")
 
