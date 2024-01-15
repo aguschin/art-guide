@@ -29,13 +29,7 @@ def get_image_idx_name_matching(images_names):
         idx, _ = find_index_from_image(image, n=1)
         idx = idx[0]
 
-        print(_im, idx)
-
-        # import ipdb
-        # ipdb.set_trace()
         file_name = find_file_name(idx)
-
-        # print(file_name)
 
         if file_name == _im:
             positive += 1

@@ -20,9 +20,7 @@ class NearestVectorFinder:
         self.vectors = parallel_normalize(vectors.squeeze())
         
     def get_nns_by_vector(self, target_vector, k=1, search_k=-1, include_distances=True):
-        # import ipdb
-
-        # ipdb.set_trace()
+        
         target_vector = target_vector.squeeze()
         target_magnitude = np.linalg.norm(target_vector)
         
