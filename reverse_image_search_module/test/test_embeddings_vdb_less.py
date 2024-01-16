@@ -11,7 +11,6 @@ IMAGE_MAX_NUMBER = 5000
 logging.basicConfig(level=logging.INFO)
 mylogger = logging.getLogger()
 
-load_vector_db(False, reload=True, vdb=False)
 
 def get_image_idx_name_matching(images_names):
     positive = 0
@@ -38,7 +37,9 @@ def get_image_idx_name_matching(images_names):
 
     return positive
 
-def test_static_accuracy():
+def test_static_accuracy_single_embedding():
+    load_vector_db(False, reload=True, vdb=False)
+
     images_names = os.listdir(DATA_IMAGES_PATH)
     images_names = images_names[:3]
 
@@ -46,6 +47,21 @@ def test_static_accuracy():
 
     acc = positive / 3
 
-    mylogger.info(f"test_static_acc: ACCURACY = {acc}")
+    mylogger.info(f"test_static_acc SINLGE EMBBEDINGS: ACCURACY = {acc}")
+
+    assert acc == 1.0
+
+
+def test_static_accuracy_multi_embedding():
+    load_vector_db(True, reload=True, vdb=False)
+    
+    images_names = os.listdir(DATA_IMAGES_PATH)
+    images_names = images_names[:3]
+
+    positive = get_image_idx_name_matching(images_names)
+
+    acc = positive / 3
+
+    mylogger.info(f"test_static_acc MULTI EMBBEDINGS: ACCURACY = {acc}")
 
     assert acc == 1.0
