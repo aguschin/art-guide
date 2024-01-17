@@ -15,6 +15,8 @@ mylogger = logging.getLogger()
 def get_image_idx_name_matching(images_names):
     positive = 0
 
+    # import ipdb
+
     for _im in images_names:
         try:
             image = Image.open(os.path.join(DATA_IMAGES_PATH, _im))
@@ -24,6 +26,9 @@ def get_image_idx_name_matching(images_names):
             mylogger.info(f'image {_im} load error')
             mylogger.info(str(ex))
             continue
+        
+        # print(_im)
+        # ipdb.set_trace()
 
         idx, _ = find_index_from_image(image, n=1)
         idx = idx[0]
@@ -38,14 +43,16 @@ def get_image_idx_name_matching(images_names):
     return positive
 
 def test_static_accuracy_single_embedding():
+    T = 100
+
     load_vector_db(False, reload=True, vdb=False)
 
     images_names = os.listdir(DATA_IMAGES_PATH)
-    images_names = images_names[:3]
+    images_names = images_names[:T]
 
     positive = get_image_idx_name_matching(images_names)
 
-    acc = positive / 3
+    acc = positive / T
 
     mylogger.info(f"test_static_acc SINLGE EMBBEDINGS: ACCURACY = {acc}")
 
@@ -53,14 +60,16 @@ def test_static_accuracy_single_embedding():
 
 
 def test_static_accuracy_multi_embedding():
+    T = 100
+
     load_vector_db(True, reload=True, vdb=False)
     
     images_names = os.listdir(DATA_IMAGES_PATH)
-    images_names = images_names[:3]
+    images_names = images_names[:T]
 
     positive = get_image_idx_name_matching(images_names)
 
-    acc = positive / 3
+    acc = positive / T
 
     mylogger.info(f"test_static_acc MULTI EMBBEDINGS: ACCURACY = {acc}")
 

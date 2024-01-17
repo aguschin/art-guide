@@ -87,8 +87,8 @@ def change_format(data):
 def find_index_from_image(img, n):
     if isinstance(img, np.ndarray):
         img = Image.fromarray((img * 255).astype(np.uint8))
-    tra = transforms.Compose([transforms.Resize((224, 224))])
-    img = tra(img)
+    # tra = transforms.Compose([transforms.Resize((224, 224))])
+    # img = tra(img)
     vector = img2vec.getVectors(img)
     vector = np.transpose(vector)
 
