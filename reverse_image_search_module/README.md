@@ -139,4 +139,3 @@ Implement parallel processing techniques to speed up the extraction of embedding
 
 ### Fine-Tuning:
 If you have a specific domain or dataset, consider fine-tuning the pre-trained model on your data to improve the relevance of search results within that domain.
-

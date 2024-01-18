@@ -47,7 +47,7 @@ You can go [here](text2speech_module/README.md) for more details about the text 
 3. The bot sends the cropped image to the reverse image search module.
 4. The reverse image search module finds the most similar image to the input image in the database, and returns it back to the bot with the relevant information.
 5. The bot evaluates if the found image is similar enough to the input image. In case it isn't, the bot tells the user that it couldn't find the image. In case it is, the bot sends the relevant information of the found image to the description generation module.
-6. The bot sends the description to the text to speech module. 
+6. The bot sends the description to the text to speech module.
 7. The bot sends the audio file to the user.
 
 ---
@@ -123,7 +123,3 @@ description = descriptor.describe(features_dict)
 
 print(description)
 ```
-
-
-
-
