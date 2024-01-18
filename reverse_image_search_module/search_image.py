@@ -87,15 +87,12 @@ def change_format(data):
 def find_index_from_image(img, n):
     if isinstance(img, np.ndarray):
         img = Image.fromarray((img * 255).astype(np.uint8))
-    # tra = transforms.Compose([transforms.Resize((224, 224))])
-    # img = tra(img)
     vector = img2vec.getVectors(img)
     vector = np.transpose(vector)
 
     norm = np.linalg.norm(vector)
 
-    # in case it is 0
-    vector = vector / (norm + 1e-9)
+    vector = vector / norm
 
     idx, dist = annoy_index.get_nns_by_vector(vector,
                                               n,
