@@ -1,4 +1,4 @@
-name: Check, test and release
+name: Run pre-commit hooks
 on:
   push:
   pull_request:
