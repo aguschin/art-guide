@@ -11,7 +11,8 @@ from tqdm import tqdm
 from decouple import config
 
 
-MULTI_EMBEDDINGS = bool(config('MULTI_EMBEDDINGS'))
+MULTI_EMBEDDINGS = config('MULTI_EMBEDDINGS').lower() == 'true'
+print(MULTI_EMBEDDINGS)
 
 torch.manual_seed(17)
 
