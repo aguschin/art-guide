@@ -171,12 +171,6 @@ if __name__ == "__main__":
     
     input_folder = 'data/img/full'
 
-    # # MULTI_EMBEDDINGS = False
-
-    # print(MULTI_EMBEDDINGS)
-    
-    # quit()
-
     if MULTI_EMBEDDINGS:
         print('Making embeddings MULTI')
 

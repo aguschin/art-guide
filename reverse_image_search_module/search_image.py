@@ -29,8 +29,8 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=True):
     file_names is not None and not reload:
         return
 
-    embeddings_path = MULTI_VALES_OUTPUT_FILE[3:] if multi else SINGLE_VALES_OUTPUT_FILE[3:]
-    embeddings_filename_path = MULTI_KEYS_OUTPUT_FILE[3:] if multi else SINGLE_KEYS_OUTPUT_FILE[3:]
+    embeddings_path = MULTI_VALES_OUTPUT_FILE if multi else SINGLE_VALES_OUTPUT_FILE
+    embeddings_filename_path = MULTI_KEYS_OUTPUT_FILE if multi else SINGLE_KEYS_OUTPUT_FILE
 
     all_embeddings = np.load(embeddings_path)
     embedding_dim = all_embeddings.shape[2]

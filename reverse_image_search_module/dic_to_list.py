@@ -3,7 +3,7 @@ import numpy as np
 from decouple import config
 
 
-MULTI_EMBEDDINGS = bool(config('MULTI_EMBEDDINGS'))
+MULTI_EMBEDDINGS = config('MULTI_EMBEDDINGS') == 'True'
 
 SINGLE_INPUT_FILE = config('SINGLE_INPUT_FILE')
 SINGLE_VALES_OUTPUT_FILE = config('SINGLE_VALES_OUTPUT_FILE')
