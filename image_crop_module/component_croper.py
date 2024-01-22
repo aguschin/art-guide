@@ -1,9 +1,7 @@
-from transformers import SegformerImageProcessor
-from transformers import SegformerForSemanticSegmentation
-import torch
 import cv2
 import numpy as np
-
+import torch
+from transformers import SegformerForSemanticSegmentation, SegformerImageProcessor
 
 MODEL_NAME = "nvidia/segformer-b0-finetuned-ade-512-512"
 
@@ -29,7 +27,7 @@ def distance(a, b):
 
 @torch.no_grad()
 def component_crop_image(image):
-    '''image: pilow image '''
+    """image: pilow image"""
 
     W = image.width
     H = image.height
@@ -64,11 +62,10 @@ def component_crop_image(image):
 
     image_center = np.array([image.width / 2, image.height / 2])
 
-    best_c = min(enumerate(centroids),
-                 key=lambda x: distance(image_center, x[1]))[0]
+    best_c = min(enumerate(centroids), key=lambda x: distance(image_center, x[1]))[0]
 
     x, y, width, height, _ = stats[best_c]
-    croped = image_np[y:y+height, x:x+width]
+    croped = image_np[y : y + height, x : x + width]
 
     # todo: add the area proportion calculus
     return croped.astype(np.float32), 1

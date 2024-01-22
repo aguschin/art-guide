@@ -114,5 +114,3 @@ edges well and more than one painting is selected.
     <td><img src="images/c3.png" alt="Image 12"></td>
   </tr>
 </table>
-
-

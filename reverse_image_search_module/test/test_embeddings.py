@@ -1,14 +1,15 @@
-import os
-import numpy as np
-import random
-from PIL import Image
-from ..search_image import find_index_from_image, find_file_name, load_vector_db
 import logging
+import os
+import random
+
+import numpy as np
+from PIL import Image
 from sklearn.metrics import precision_recall_curve
+
+from ..search_image import find_file_name, find_index_from_image, load_vector_db
 from ..utils import make_syntetic_first_second_distances
 
-
-DATA_IMAGES_PATH = 'data/img/full/'
+DATA_IMAGES_PATH = "data/img/full/"
 IMAGE_MAX_NUMBER = 5000
 
 
@@ -16,6 +17,7 @@ logging.basicConfig(level=logging.INFO)
 mylogger = logging.getLogger()
 
 load_vector_db(False, reload=True)
+
 
 def get_image_idx_name_matching(images_names):
     positive = 0
@@ -26,7 +28,7 @@ def get_image_idx_name_matching(images_names):
             # to check the size and truncation
             _ = image.resize((255, 255))
         except Exception as ex:
-            mylogger.info(f'image {_im} load error')
+            mylogger.info(f"image {_im} load error")
             mylogger.info(str(ex))
             continue
 
@@ -73,19 +75,18 @@ def test_static_accuracy_random():
 
 
 def test_precision_recall():
-    y_test, y_score = make_syntetic_first_second_distances(DATA_IMAGES_PATH,
-                                                           n=5000)
+    y_test, y_score = make_syntetic_first_second_distances(DATA_IMAGES_PATH, n=5000)
     precision, recall, thresholds = precision_recall_curve(y_test, y_score)
 
     # find recall value with 0.9 of presition value
-    index = np.searchsorted(precision, 0.9, side='left')
+    index = np.searchsorted(precision, 0.9, side="left")
     if index > precision.shape[0]:
-        index = precision.shape[0]-1
+        index = precision.shape[0] - 1
 
     recall_idx = recall[index]
 
-    mylogger.info(f'test presition/recall presition value {precision[index]}')
-    mylogger.info(f'test presition/recall recall value {recall_idx}')
-    mylogger.info(f'test presition/recall threshold value {thresholds[index]}')
+    mylogger.info(f"test presition/recall presition value {precision[index]}")
+    mylogger.info(f"test presition/recall recall value {recall_idx}")
+    mylogger.info(f"test presition/recall threshold value {thresholds[index]}")
 
     assert recall_idx > 0.6
