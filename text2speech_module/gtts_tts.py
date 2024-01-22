@@ -1,5 +1,6 @@
-from gtts import gTTS
 import os
+
+from gtts import gTTS
 
 
 def gtts_text_to_audio(text: str, index: int):
@@ -11,14 +12,16 @@ def gtts_text_to_audio(text: str, index: int):
         lang (str): Language in which to convert the text (default is 'en' for English).
         slow (bool): Whether the audio should be slow (default is False).
     """
-    lang = 'en'
+    lang = "en"
     slow = False
 
     # Generate the audio using gTTS
     tts = gTTS(text=text, lang=lang, slow=slow)
 
     filename = f"{index}.mp3"
-    filepath = os.path.join("output_folder", filename)  # Change "output_folder" to your desired output folder
+    filepath = os.path.join(
+        "output_folder", filename
+    )  # Change "output_folder" to your desired output folder
 
     # Save the generated audio to the file
     tts.save(filepath)

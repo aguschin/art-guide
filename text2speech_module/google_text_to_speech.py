@@ -1,7 +1,7 @@
 from gtts import gTTS
 
 
-def text_to_audio(text, language='en', slow=False, filename="output.mp3"):
+def text_to_audio(text, language="en", slow=False, filename="output.mp3"):
     """
     Convert a given text to audio and save it to a file.
 
