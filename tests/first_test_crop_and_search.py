@@ -1,13 +1,18 @@
 import sys
-from os.path import dirname, abspath
+from os.path import abspath, dirname
+
 sys.path.append(dirname(dirname(abspath(__file__))))
 import warnings
+
 warnings.filterwarnings("ignore")
-from image_crop_module.croper import crop_image
-from reverse_image_search_module.search_image import find_image, find_file_name
 import os
-from PIL import Image
 import statistics
+
+from PIL import Image
+
+from image_crop_module.croper import crop_image
+from reverse_image_search_module.search_image import find_file_name, find_image
+
 
 def process_image(image_path, n=1):
     img = Image.open(image_path)
@@ -19,25 +24,26 @@ def process_image(image_path, n=1):
 import os
 import statistics
 
+
 def test_images_after_crop(folder_path):
     matched_count = 0
-    supported_extensions = ['.jpg', '.jpeg', '.png', '.bmp', '.gif']
+    supported_extensions = [".jpg", ".jpeg", ".png", ".bmp", ".gif"]
 
     reference_images_idx = {}
 
     # Process reference images
     for file in os.listdir(folder_path):
-        if file.lower().endswith(tuple(supported_extensions)) and '-' not in file:
+        if file.lower().endswith(tuple(supported_extensions)) and "-" not in file:
             full_path = os.path.join(folder_path, file)
-            base_file_name = file.split('.')[0]
+            base_file_name = file.split(".")[0]
             reference_images_idx[base_file_name] = process_image(full_path, n=1)
 
     positions = []
 
     # Process and compare images with reference
     for file in os.listdir(folder_path):
-        if file.lower().endswith(tuple(supported_extensions)) and '-' in file:
-            base_file_name, _ = file.split('-')[0], file.split('-')[1]
+        if file.lower().endswith(tuple(supported_extensions)) and "-" in file:
+            base_file_name, _ = file.split("-")[0], file.split("-")[1]
             if base_file_name in reference_images_idx:
                 full_path = os.path.join(folder_path, file)
                 processed_idx_list = process_image(full_path, n=10000)
@@ -58,7 +64,7 @@ def test_images_after_crop(folder_path):
 
     return median_position, mean_position, positions, zero_position_percentage
 
-#Set the MULTI_EMBEDDINGS in .env file to True or False for testing on single or multi embeddings
-folder_path = 'tests/test_crop'
-test_images_after_crop(folder_path)
 
+# Set the MULTI_EMBEDDINGS in .env file to True or False for testing on single or multi embeddings
+folder_path = "tests/test_crop"
+test_images_after_crop(folder_path)
