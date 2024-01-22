@@ -1,8 +1,9 @@
-import transformers import BarkModel
-from transformers import AutoProcessor
-import torch
-import scipy
+import BarkModel
 import numpy as np
+import scipy
+import torch
+import transformers
+from transformers import AutoProcessor
 
 model = BarkModel.from_pretrained("suno/bark-small")
 processor = AutoProcessor.from_pretrained("suno/bark-small")
@@ -14,20 +15,21 @@ model = model.to(device)
 # Function to split the text into chunks
 def split_text(text, chunk_size=100):
     # Split by spaces to keep words intact
-    words = text.split(' ')
+    words = text.split(" ")
     chunks = []
-    current_chunk = ''
+    current_chunk = ""
     for word in words:
         # If adding the next word exceeds the chunk size, save the current chunk
         if len(current_chunk) + len(word) > chunk_size:
             chunks.append(current_chunk)
             current_chunk = word
         else:
-            current_chunk += ' ' + word
+            current_chunk += " " + word
     # Add the last chunk if not empty
     if current_chunk:
         chunks.append(current_chunk)
     return chunks
+
 
 def suno_bark_tts(text_prompt: str, index: int):
     # Split the text into chunks

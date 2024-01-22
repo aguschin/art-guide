@@ -24,7 +24,7 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
