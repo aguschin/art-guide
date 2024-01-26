@@ -1,6 +1,7 @@
 import pyttsx3
 
-def pyttsx3_text_to_audio(text:str, index:int):
+
+def pyttsx3_text_to_audio(text: str, index: int):
     """
     Convert a given text to audio and save it to a file.
     Args:
@@ -20,8 +21,8 @@ def pyttsx3_text_to_audio(text:str, index:int):
     volume = 0.9
 
     # Set properties (optional)
-    audio_converter.setProperty("rate", rate) # Speed of speech (words per minute)
-    audio_converter.setProperty("volume", volume) # Volume level (0.0 to 1.0)
+    audio_converter.setProperty("rate", rate)  # Speed of speech (words per minute)
+    audio_converter.setProperty("volume", volume)  # Volume level (0.0 to 1.0)
 
     filename = f"{index}.mp3"
 
