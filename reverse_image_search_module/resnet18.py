@@ -12,7 +12,6 @@ from decouple import config
 
 
 MULTI_EMBEDDINGS = config('MULTI_EMBEDDINGS').lower() == 'true'
-print(MULTI_EMBEDDINGS)
 
 torch.manual_seed(17)
 

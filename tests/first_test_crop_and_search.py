@@ -4,7 +4,8 @@ sys.path.append(dirname(dirname(abspath(__file__))))
 import warnings
 warnings.filterwarnings("ignore")
 from image_crop_module.croper import crop_image
-from reverse_image_search_module.search_image import find_image, find_file_name
+from reverse_image_search_module.search_image import find_image, load_vector_db
+
 import os
 from PIL import Image
 import statistics
@@ -15,12 +16,13 @@ def process_image(image_path, n=1):
     idx, _, _ = find_image(cropped_image, n)
     return idx
 
-
+ 
 import os
 import statistics
 
-def test_images_after_crop(folder_path):
-    matched_count = 0
+def run_the_test(multi):
+    load_vector_db(multi=multi, reload=True)
+    folder_path= 'tests/test_crop'
     supported_extensions = ['.jpg', '.jpeg', '.png', '.bmp', '.gif']
 
     reference_images_idx = {}
@@ -50,15 +52,18 @@ def test_images_after_crop(folder_path):
     median_position = statistics.median(positions)
     mean_position = statistics.mean(positions)
     zero_position_percentage = sum([el == 0 for el in positions]) / len(positions)
+    return median_position, mean_position, zero_position_percentage
 
+def test_images_after_crop_single_embedding():
+    median_position, mean_position, zero_position_percentage = run_the_test(multi=False)
     print("Median Position:", median_position)
     print("Mean Position:", mean_position)
-    print("Positions:", positions)
     print("Percentage of Positions at 0:", zero_position_percentage)
+    assert zero_position_percentage > 0.17, "Ratio of correct findings should be higher"
 
-    return median_position, mean_position, positions, zero_position_percentage
-
-#Set the MULTI_EMBEDDINGS in .env file to True or False for testing on single or multi embeddings
-folder_path = 'tests/test_crop'
-test_images_after_crop(folder_path)
-
+def test_images_after_crop_multi_embedding():
+    median_position, mean_position, zero_position_percentage = run_the_test(multi=True)
+    print("Median Position:", median_position)
+    print("Mean Position:", mean_position)
+    print("Percentage of Positions at 0:", zero_position_percentage)
+    assert zero_position_percentage > 0.21, "Ratio of correct findings should be higher"

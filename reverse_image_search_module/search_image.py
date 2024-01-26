@@ -22,6 +22,7 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False):
     global annoy_index
     global file_names
 
+
     if dataset is not None and annoy_index is not None and \
     file_names is not None and not reload:
         return
