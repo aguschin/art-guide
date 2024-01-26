@@ -25,18 +25,12 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False):
     global annoy_index
     global file_names
 
-<<<<<<< HEAD
-
-    if dataset is not None and annoy_index is not None and \
-    file_names is not None and not reload:
-=======
     if (
         dataset is not None
         and annoy_index is not None
         and file_names is not None
         and not reload
     ):
->>>>>>> 6db3875f600729f935e5e1eed6df096844d41bd1
         return
 
     embeddings_path = (

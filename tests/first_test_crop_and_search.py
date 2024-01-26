@@ -5,12 +5,13 @@ sys.path.append(dirname(dirname(abspath(__file__))))
 import warnings
 
 warnings.filterwarnings("ignore")
-from image_crop_module.croper import crop_image
-from reverse_image_search_module.search_image import find_image, load_vector_db
 import os
 import statistics
 
 from PIL import Image
+
+from image_crop_module.croper import crop_image
+from reverse_image_search_module.search_image import find_image, load_vector_db
 
 
 def process_image(image_path, n=1):
@@ -19,14 +20,15 @@ def process_image(image_path, n=1):
     idx, _, _ = find_image(cropped_image, n)
     return idx
 
- 
+
 import os
 import statistics
 
+
 def run_the_test(multi):
     load_vector_db(multi=multi, reload=True)
-    folder_path= 'tests/test_crop'
-    supported_extensions = ['.jpg', '.jpeg', '.png', '.bmp', '.gif']
+    folder_path = "tests/test_crop"
+    supported_extensions = [".jpg", ".jpeg", ".png", ".bmp", ".gif"]
 
     reference_images_idx = {}
 
@@ -56,6 +58,7 @@ def run_the_test(multi):
     mean_position = statistics.mean(positions)
     zero_position_percentage = sum([el == 0 for el in positions]) / len(positions)
     return median_position, mean_position, zero_position_percentage
+
 
 def test_images_after_crop_single_embedding():
     median_position, mean_position, zero_position_percentage = run_the_test(multi=False)
