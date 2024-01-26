@@ -11,7 +11,7 @@ from PIL import Image
 from torchvision import transforms
 from tqdm import tqdm
 
-MULTI_EMBEDDINGS = bool(config("MULTI_EMBEDDINGS"))
+MULTI_EMBEDDINGS = config("MULTI_EMBEDDINGS").lower() == "true"
 
 torch.manual_seed(17)
 
