@@ -52,9 +52,14 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=True):
             vec = vec.squeeze()
             vec = vec / np.linalg.norm(vec)
             annoy_index.add_item(idx, vec)
+        
+        num_trees = 50
+        annoy_index.build(num_trees)
+    
+    else:
+        print('Loaded slow db:', embeddings_path, embeddings_filename_path)
 
-    num_trees = 50
-    annoy_index.build(num_trees)
+        annoy_index = NearestVectorFinder(all_embeddings)
 
     dataset = pd.read_csv('./data/data.csv',
                         low_memory=False)

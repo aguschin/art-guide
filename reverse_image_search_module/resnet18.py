@@ -16,7 +16,7 @@ import warnings
 # Disable all warnings
 warnings.filterwarnings("ignore")
 
-MULTI_EMBEDDINGS = bool(config('MULTI_EMBEDDINGS'))
+MULTI_EMBEDDINGS = config('MULTI_EMBEDDINGS') == 'True'
 
 SINGLE_VALES_OUTPUT_FILE = config('SINGLE_VALES_OUTPUT_FILE')
 SINGLE_KEYS_OUTPUT_FILE = config('SINGLE_KEYS_OUTPUT_FILE')
