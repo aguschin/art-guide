@@ -94,6 +94,9 @@ def test_precision_recall():
     mylogger.info(f"test presition/recall threshold value {thresholds[index]}")
 
     try:
-    assert recall_idx > 0.6, 'Recall index is less than 0.6'
+    try:
+        assert recall_idx > 0.6, 'Recall index is less than 0.6'
+    except AssertionError as ae:
+        raise AssertionError(f'Test failed: {ae}')
 except AssertionError as ae:
     raise AssertionError(f'Test failed: {ae}')
