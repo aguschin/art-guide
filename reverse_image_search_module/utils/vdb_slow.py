@@ -14,7 +14,7 @@ class NearestVectorFinder:
     def __init__(self, vectors):
         after_squeeeze = len(vectors.shape) - sum([1 if val == 1 else 0 for val in vectors.shape])
 
-        assert after_squeeeze == 2, 'vectors shape most be NxM'
+        assert after_squeeeze == 2, 'vectors shape must be NxM'
         
         # vectors is a list of vectors you want to compare against
         self.vectors = parallel_normalize(vectors.squeeze())
