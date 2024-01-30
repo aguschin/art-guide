@@ -1,10 +1,11 @@
-import os
-from PIL import Image
-from ..search_image import find_index_from_image, find_file_name, load_vector_db
 import logging
+import os
 
+from PIL import Image
 
-DATA_IMAGES_PATH = 'data/img/full/'
+from ..search_image import find_file_name, find_index_from_image, load_vector_db
+
+DATA_IMAGES_PATH = "data/img/full/"
 IMAGE_MAX_NUMBER = 5000
 
 
@@ -23,10 +24,10 @@ def get_image_idx_name_matching(images_names):
             # to check the size and truncation
             _ = image.resize((255, 255))
         except Exception as ex:
-            mylogger.info(f'image {_im} load error')
+            mylogger.info(f"image {_im} load error")
             mylogger.info(str(ex))
             continue
-        
+
         # print(_im)
         # ipdb.set_trace()
 
@@ -41,6 +42,7 @@ def get_image_idx_name_matching(images_names):
             mylogger.info(f"UNMATCHED <original>{_im} <matched>{file_name}")
 
     return positive
+
 
 def test_static_accuracy_single_embedding():
     T = 100
@@ -63,7 +65,7 @@ def test_static_accuracy_multi_embedding():
     T = 100
 
     load_vector_db(True, reload=True, vdb=False)
-    
+
     images_names = os.listdir(DATA_IMAGES_PATH)
     images_names = images_names[:T]
 

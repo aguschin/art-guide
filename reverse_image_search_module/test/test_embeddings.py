@@ -5,6 +5,7 @@ import random
 import numpy as np
 from PIL import Image
 from sklearn.metrics import precision_recall_curve
+
 from ..utils.utils import make_syntetic_first_second_distances
 
 DATA_IMAGES_PATH = "data/img/full/"

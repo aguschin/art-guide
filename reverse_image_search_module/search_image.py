@@ -1,15 +1,20 @@
 import ast
-from .resnet18 import img2vec, MULTI_EMBEDDINGS
-from .resnet18 import SINGLE_VALES_OUTPUT_FILE, SINGLE_KEYS_OUTPUT_FILE
-from .resnet18 import MULTI_KEYS_OUTPUT_FILE, MULTI_VALES_OUTPUT_FILE
+
 import numpy as np
 import pandas as pd
 import torchvision.transforms as transforms
 from annoy import AnnoyIndex
 from PIL import Image
-from .utils.vdb_slow import NearestVectorFinder
 
-from .resnet18 import MULTI_EMBEDDINGS, img2vec
+from .resnet18 import (
+    MULTI_EMBEDDINGS,
+    MULTI_KEYS_OUTPUT_FILE,
+    MULTI_VALES_OUTPUT_FILE,
+    SINGLE_KEYS_OUTPUT_FILE,
+    SINGLE_VALES_OUTPUT_FILE,
+    img2vec,
+)
+from .utils.vdb_slow import NearestVectorFinder
 
 dataset = None
 annoy_index = None
@@ -21,6 +26,7 @@ def extract_file_name(x):
         return x[0]["path"].split("/")[-1]
     else:
         return None
+
 
 def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=True):
     global dataset
@@ -36,34 +42,35 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=True):
         return
 
     embeddings_path = MULTI_VALES_OUTPUT_FILE if multi else SINGLE_VALES_OUTPUT_FILE
-    embeddings_filename_path = MULTI_KEYS_OUTPUT_FILE if multi else SINGLE_KEYS_OUTPUT_FILE
+    embeddings_filename_path = (
+        MULTI_KEYS_OUTPUT_FILE if multi else SINGLE_KEYS_OUTPUT_FILE
+    )
 
     all_embeddings = np.load(embeddings_path)
     embedding_dim = all_embeddings.shape[2]
     file_names = np.load(embeddings_filename_path)
 
     if vdb:
-        print('Loaded annoy')
+        print("Loaded annoy")
         # Build Annoy index
         # using dot, while assuming the vectors are normalized
-        annoy_index = AnnoyIndex(embedding_dim, metric='dot')
+        annoy_index = AnnoyIndex(embedding_dim, metric="dot")
 
         for idx, vec in enumerate(all_embeddings):
             vec = vec.squeeze()
             vec = vec / np.linalg.norm(vec)
             annoy_index.add_item(idx, vec)
-        
+
         num_trees = 50
         annoy_index.build(num_trees)
-    
+
     else:
-        print('Loaded slow db:', embeddings_path, embeddings_filename_path)
+        print("Loaded slow db:", embeddings_path, embeddings_filename_path)
 
         annoy_index = NearestVectorFinder(all_embeddings)
 
-    dataset = pd.read_csv('./data/data.csv',
-                        low_memory=False)
-    dataset['images'].fillna('[]', inplace=True)
+    dataset = pd.read_csv("./data/data.csv", low_memory=False)
+    dataset["images"].fillna("[]", inplace=True)
 
     dataset["images"] = dataset["images"].apply(ast.literal_eval)
 

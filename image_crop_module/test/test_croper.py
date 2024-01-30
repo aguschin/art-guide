@@ -46,16 +46,22 @@ def calculate_croped_number(path, threshold=0.9, fail=True, log=True):
             croped += 1
 
             if not fail and log:
-                mylogger.info(f"Area Proportion image not fail at {threshold}-({proportion}) : {image_name}")
+                mylogger.info(
+                    f"Area Proportion image not fail at {threshold}-({proportion}) : {image_name}"
+                )
 
         elif fail and log:
-            mylogger.info(f"Area Proportion image fail at {threshold}-({proportion}) : {image_name}")
+            mylogger.info(
+                f"Area Proportion image fail at {threshold}-({proportion}) : {image_name}"
+            )
 
     return croped / total
 
 
 def test_ratio_non_cropable_images():
-    proportion = calculate_croped_number(DATA_MOST_NOT_CROP_PATH, threshold=0.9, fail=False)
+    proportion = calculate_croped_number(
+        DATA_MOST_NOT_CROP_PATH, threshold=0.9, fail=False
+    )
     mylogger.info(f"test_ratio_non_cropable_images: proportion={proportion}")
 
     assert proportion < 0.1
@@ -72,7 +78,9 @@ def test_ratio_cropable_images():
 def test_croper_time_rate():
     TIME_RATE = 1.5 * 60  # mean minutes per operation
 
-    total = len(os.listdir(DATA_MOST_NOT_CROP_PATH)) + len(os.listdir(DATA_MOST_CROP_PATH))
+    total = len(os.listdir(DATA_MOST_NOT_CROP_PATH)) + len(
+        os.listdir(DATA_MOST_CROP_PATH)
+    )
 
     initial_time = time()
 

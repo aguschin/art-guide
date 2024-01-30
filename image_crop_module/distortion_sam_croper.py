@@ -3,15 +3,13 @@ import math
 import cv2
 import numpy as np
 import torch
+from segment_anything import SamPredictor, sam_model_registry
 from transformers import SegformerForSemanticSegmentation, SegformerImageProcessor
-from segment_anything import sam_model_registry
-from segment_anything import SamPredictor
-
 
 SAM_MODELS = {
     "vit_h": "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth",
     "vit_l": "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth",
-    "vit_b": "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth"
+    "vit_b": "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth",
 }
 
 from .cropper_utils import (
@@ -19,7 +17,6 @@ from .cropper_utils import (
     find_width_height_aspect_ratio,
     side_distance,
 )
-
 
 MODEL_NAME = "nvidia/segformer-b0-finetuned-ade-512-512"
 
@@ -115,10 +112,10 @@ def poligon_area_from_points(vertices):
 
 
 def calc_bbox_from_points(points):
-    mi_x, mi_y = points[:,0].min(), points[:,1].min()
-    ma_x, ma_y = points[:,0].max(), points[:,1].max()
+    mi_x, mi_y = points[:, 0].min(), points[:, 1].min()
+    ma_x, ma_y = points[:, 0].max(), points[:, 1].max()
 
-    return [ (mi_x, mi_y), (ma_x, mi_y), (ma_x, ma_y), (mi_x, ma_y) ]
+    return [(mi_x, mi_y), (ma_x, mi_y), (ma_x, ma_y), (mi_x, ma_y)]
 
 
 def make_four_points(poligon):
@@ -193,6 +190,7 @@ def adjust_points_and_padd(point_list, IW, IH):
 
 #  ------------------------------------------------------------------
 
+
 @torch.no_grad()
 def generate_mask(image, minimun_area=100, dp_box=3):
     """
@@ -219,7 +217,9 @@ def generate_mask(image, minimun_area=100, dp_box=3):
 
     # find bboxes
     mask = cv2.dilate(mask.astype(np.uint8), None, iterations=1)
-    num_labels, _, stats, centroids = cv2.connectedComponentsWithStats(mask, connectivity=8)
+    num_labels, _, stats, centroids = cv2.connectedComponentsWithStats(
+        mask, connectivity=8
+    )
 
     boxes = []
     area_threshold = 0
@@ -231,27 +231,30 @@ def generate_mask(image, minimun_area=100, dp_box=3):
 
         # distance to the center
         D = (IW / 2 - centroids[i][0]) ** 2 + (IH / 2 - centroids[i][1]) ** 2
-        
+
         if area > minimun_area:
-            boxes.append((x,y,x+w,y+h, D, area))
+            boxes.append((x, y, x + w, y + h, D, area))
             area_threshold = max(area_threshold, area)
-    
+
     if len(boxes) == 0:
         return image_array, np.zeros(image_array.shape, dtype=np.uint8), False
-    
+
     area_threshold *= 0.8
 
-    selected = min(
-        boxes, key=lambda x: x[4] if x[5] >= area_threshold else 1e9
-    )
+    selected = min(boxes, key=lambda x: x[4] if x[5] >= area_threshold else 1e9)
 
     x, y, w, h, _, _ = selected
     # convert boxes cordinates to the original image shape
-    x, y, w, h = (x/IW)*OW, (y/IH)*OH, (w/IW)*OW, (h/IH)*OH
+    x, y, w, h = (x / IW) * OW, (y / IH) * OH, (w / IW) * OW, (h / IH) * OH
     # expand the boxes
-    x, y, w, h = max(0, x-dp_box), max(0, y-dp_box), min(OW-1, w+dp_box), min(OH-1, h+dp_box)
-    
-    boxes = [ (x, y, w, h) ]
+    x, y, w, h = (
+        max(0, x - dp_box),
+        max(0, y - dp_box),
+        min(OW - 1, w + dp_box),
+        min(OH - 1, h + dp_box),
+    )
+
+    boxes = [(x, y, w, h)]
 
     sam.set_image(image_array)
 
@@ -321,12 +324,14 @@ def distortion_crop_image(image):
     if len(contours) < 1:
         return image, 1
 
-    contour, raw_contour_area = find_best_contour(contours, mask.shape[0], mask.shape[1])
+    contour, raw_contour_area = find_best_contour(
+        contours, mask.shape[0], mask.shape[1]
+    )
 
     # the area of the segemented area is too small
     if raw_contour_area < 800:
         return image, 1
-    
+
     del contours
 
     contour = cv2.convexHull(contour)
@@ -372,7 +377,9 @@ def distortion_crop_image(image):
     matrix = cv2.getPerspectiveTransform(src_points, dst_points)
 
     # Apply the perspective warp to the image
-    warped_image = cv2.warpPerspective(image_np, matrix, (image_np.shape[0], image_np.shape[1]))
+    warped_image = cv2.warpPerspective(
+        image_np, matrix, (image_np.shape[0], image_np.shape[1])
+    )
 
     # Adjust aspect ratio of wraping
     aspect_ratio = find_aspect_ratio(src_points)

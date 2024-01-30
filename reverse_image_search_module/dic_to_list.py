@@ -3,8 +3,7 @@ import pickle
 import numpy as np
 from decouple import config
 
-
-MULTI_EMBEDDINGS = config('MULTI_EMBEDDINGS') == 'True'
+MULTI_EMBEDDINGS = config("MULTI_EMBEDDINGS") == "True"
 
 SINGLE_INPUT_FILE = config("SINGLE_INPUT_FILE")
 SINGLE_VALES_OUTPUT_FILE = config("SINGLE_VALES_OUTPUT_FILE")
@@ -15,11 +14,12 @@ MULTI_VALES_OUTPUT_FILE = config("MULTI_VALES_OUTPUT_FILE")
 MULTI_KEYS_OUTPUT_FILE = config("MULTI_KEYS_OUTPUT_FILE")
 
 
-def extract_embedding(input_file = MULTI_INPUT_FILE, 
-                    values_output_file = MULTI_VALES_OUTPUT_FILE,
-                    keys_output_file = MULTI_KEYS_OUTPUT_FILE):
-    
-    with open(input_file, 'rb') as f:
+def extract_embedding(
+    input_file=MULTI_INPUT_FILE,
+    values_output_file=MULTI_VALES_OUTPUT_FILE,
+    keys_output_file=MULTI_KEYS_OUTPUT_FILE,
+):
+    with open(input_file, "rb") as f:
         data_dict = pickle.load(f)
 
     keys = []
@@ -35,19 +35,23 @@ def extract_embedding(input_file = MULTI_INPUT_FILE,
     np.save(keys_output_file, keys)
     np.save(values_output_file, values)
 
-    print('Saved', keys_output_file, values_output_file)
+    print("Saved", keys_output_file, values_output_file)
 
 
 if __name__ == "__main__":
     if MULTI_EMBEDDINGS:
-        print('Extracting Multi')
+        print("Extracting Multi")
 
-        extract_embedding(input_file = MULTI_INPUT_FILE, 
-                    values_output_file = MULTI_VALES_OUTPUT_FILE,
-                    keys_output_file = MULTI_KEYS_OUTPUT_FILE)
+        extract_embedding(
+            input_file=MULTI_INPUT_FILE,
+            values_output_file=MULTI_VALES_OUTPUT_FILE,
+            keys_output_file=MULTI_KEYS_OUTPUT_FILE,
+        )
     else:
-        print('Extracting Multi')
+        print("Extracting Multi")
 
-        extract_embedding(input_file = SINGLE_INPUT_FILE,
-                     values_output_file = SINGLE_VALES_OUTPUT_FILE,
-                     keys_output_file = SINGLE_KEYS_OUTPUT_FILE)
+        extract_embedding(
+            input_file=SINGLE_INPUT_FILE,
+            values_output_file=SINGLE_VALES_OUTPUT_FILE,
+            keys_output_file=SINGLE_KEYS_OUTPUT_FILE,
+        )
