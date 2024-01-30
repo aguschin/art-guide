@@ -8,7 +8,7 @@ TELEGRAM_TOKEN = config("TELEGRAM_TOKEN")
 bot = TeleBot(token=TELEGRAM_TOKEN)
 
 DEBUG = bool(config("DEBUG"))
-API_PORT = config("API_PORT")
+API_PORT = int(config("API_PORT"))
 
 
 @bot.message_handler(commands=["start", "help"])
