@@ -53,7 +53,10 @@ def test_static_accuracy():
 
     mylogger.info(f"test_static_acc: ACCURACY = {acc}")
 
-    assert acc > 0.98
+    try:
+    assert acc > 0.98, 'Accuracy is less than 98%'
+except AssertionError as ae:
+    raise AssertionError(f'Test failed: {ae}')
 
 
 def test_static_accuracy_random():
@@ -87,4 +90,7 @@ def test_precision_recall():
     mylogger.info(f"test presition/recall recall value {recall_idx}")
     mylogger.info(f"test presition/recall threshold value {thresholds[index]}")
 
-    assert recall_idx > 0.6
+    try:
+    assert recall_idx > 0.6, 'Recall index is less than 0.6'
+except AssertionError as ae:
+    raise AssertionError(f'Test failed: {ae}')
