@@ -54,7 +54,10 @@ def test_static_accuracy():
     mylogger.info(f"test_static_acc: ACCURACY = {acc}")
 
     try:
+    try:
     assert acc > 0.98, 'Accuracy is less than 98%'
+except AssertionError as ae:
+    raise AssertionError(f'Test failed: {ae}'), 'Accuracy is less than 98%'
 except AssertionError as ae:
     raise AssertionError(f'Test failed: {ae}')
 
