@@ -8,6 +8,7 @@ app = FastAPI()
 
 verbose = bool(config("DEBUG"))
 k_nearest = int(config("DEBUG_KNUMBER"))
+api_port = bool(config("API_PORT"))
 
 
 @app.get("/process_image/")
@@ -23,4 +24,4 @@ async def process_image(json: dict):
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host="0.0.0.0", port=api_port)
