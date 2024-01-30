@@ -114,10 +114,24 @@ def poligon_area_from_points(vertices):
     return area
 
 
+def calc_bbox_from_points(points):
+    mi_x, mi_y = points[:,0].min(), points[:,1].min()
+    ma_x, ma_y = points[:,0].max(), points[:,1].max()
+
+    return [ (mi_x, mi_y), (ma_x, mi_y), (ma_x, ma_y), (mi_x, ma_y) ]
+
+
 def make_four_points(poligon):
     points = poligon.reshape(-1, 2)
 
-    assert poligon.shape[0] > 3
+    assert poligon.shape[0] > 2
+
+    if poligon.shape[0] == 3:
+        # calc a bounding box
+        bbox = calc_bbox_from_points(points)
+        corner_oriented_bbox = make_corners(bbox)
+
+        return corner_oriented_bbox
 
     points_distance = []
     for i in range(points.shape[0]):
@@ -295,7 +309,7 @@ def distortion_crop_image(image):
 
     # ipdb.set_trace()
 
-    image, mask, flag = generate_mask(image, 500, 3)
+    image, mask, flag = generate_mask(image, 800, 3)
 
     if not flag:
         return image, 1
@@ -305,13 +319,13 @@ def distortion_crop_image(image):
 
     # no painting found
     if len(contours) < 1:
-        return np.array(image, dtype=np.float32) / 255.0, 1
+        return image, 1
 
     contour, raw_contour_area = find_best_contour(contours, mask.shape[0], mask.shape[1])
 
     # the area of the segemented area is too small
-    if raw_contour_area < 500:
-        return np.array(image, dtype=np.float32) / 255.0, 1
+    if raw_contour_area < 800:
+        return image, 1
     
     del contours
 
@@ -338,7 +352,7 @@ def distortion_crop_image(image):
         right_pad,
         cv2.BORDER_CONSTANT,
         value=(0, 0, 0),
-    )  # padding color
+    )
 
     src_points = points.astype(np.float32)
 

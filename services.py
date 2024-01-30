@@ -30,7 +30,7 @@ def run_all_models(filename, photo_url, verbose=False, k_neibours=1):
     if verbose:
         image_filename = "cache/cropped_" + get_image_name_from_url(photo_url)
 
-        pil_img = Image.fromarray((cropped_image * 255).astype(np.uint8))
+        pil_img = Image.fromarray((cropped_image).astype(np.uint8))
         pil_img.save(image_filename)
 
     if distance[0] < 0.9:

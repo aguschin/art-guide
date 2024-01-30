@@ -24,5 +24,4 @@ async def process_image(json: dict):
 
 
 if __name__ == "__main__":
-    print(api_port)
     uvicorn.run("main:app", host="0.0.0.0", port=api_port)
