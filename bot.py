@@ -8,6 +8,7 @@ TELEGRAM_TOKEN = config("TELEGRAM_TOKEN")
 bot = TeleBot(token=TELEGRAM_TOKEN)
 
 DEBUG = bool(config("DEBUG"))
+API_PORT = int(config("API_PORT"))
 
 
 @bot.message_handler(commands=["start", "help"])
@@ -43,7 +44,7 @@ def handle_image(message):
     )
 
     response = requests.get(
-        "http://localhost:8000/process_image/",
+        f"http://localhost:{API_PORT}/process_image/",
         json={"filename": filename, "photo_url": photo_url},
     )
 

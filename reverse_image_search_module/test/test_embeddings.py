@@ -6,8 +6,7 @@ import numpy as np
 from PIL import Image
 from sklearn.metrics import precision_recall_curve
 
-from ..search_image import find_file_name, find_index_from_image, load_vector_db
-from ..utils import make_syntetic_first_second_distances
+from ..utils.utils import make_syntetic_first_second_distances
 
 DATA_IMAGES_PATH = "data/img/full/"
 IMAGE_MAX_NUMBER = 5000

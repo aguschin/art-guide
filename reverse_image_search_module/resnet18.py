@@ -1,6 +1,7 @@
 import os
 import pickle
 import random
+import warnings
 
 import numpy as np
 import PIL
@@ -11,7 +12,17 @@ from PIL import Image
 from torchvision import transforms
 from tqdm import tqdm
 
-MULTI_EMBEDDINGS = config("MULTI_EMBEDDINGS").lower() == "true"
+# Disable all warnings
+warnings.filterwarnings("ignore")
+
+MULTI_EMBEDDINGS = config("MULTI_EMBEDDINGS") == "True"
+
+SINGLE_VALES_OUTPUT_FILE = config("SINGLE_VALES_OUTPUT_FILE")
+SINGLE_KEYS_OUTPUT_FILE = config("SINGLE_KEYS_OUTPUT_FILE")
+
+MULTI_VALES_OUTPUT_FILE = config("MULTI_VALES_OUTPUT_FILE")
+MULTI_KEYS_OUTPUT_FILE = config("MULTI_KEYS_OUTPUT_FILE")
+
 
 torch.manual_seed(17)
 
@@ -61,11 +72,13 @@ img2vec = Img2VecResnet18(batch_size=1)
 
 
 def extract_and_save_embeddings(input_folder, output_file):
-    image_files = [
-        f
-        for f in os.listdir(input_folder)
-        if f.endswith((".jpg", ".jpeg", ".png", ".bmp"))
-    ]
+    image_files = tqdm(
+        [
+            f
+            for f in os.listdir(input_folder)
+            if f.endswith((".jpg", ".jpeg", ".png", ".bmp"))
+        ]
+    )
 
     counter = 0
     failed = 0
@@ -73,21 +86,18 @@ def extract_and_save_embeddings(input_folder, output_file):
 
     for image_file in image_files:
         image_path = os.path.join(input_folder, image_file)
+
         try:
             image = Image.open(image_path)
-            feature_vector = img2vec.getVectors(image)
+
+            vectors = [img2vec.getVectors(image)]
+
+            embeddings_dict[image_file] = vectors
+
+            counter += 1
         except Exception as e:
-            print(f"Skipping image: {image_file} - Error: {e}")
+            print(f"Skipping image: {image_file} - Error: {str(e)}")
             failed += 1
-            embeddingzero = np.zeros((1, img2vec.numberFeatures))
-            embeddings_dict[str(embeddingzero)] = image_file
-            continue
-
-        embeddings_dict[image_file] = np.asarray(feature_vector)
-        counter += 1
-
-        if counter % 1000 == 0:
-            print(counter)
 
     with open(output_file, "wb") as output_f:
         pickle.dump(embeddings_dict, output_f)
@@ -182,8 +192,12 @@ if __name__ == "__main__":
     input_folder = "data/img/full"
 
     if MULTI_EMBEDDINGS:
+        print("Making embeddings MULTI")
+
         output_file = f"{IMAGE_FOLDER}/embeddings_full_multi.pkl"
         extract_and_save_embeddings_multiple(input_folder, output_file)
     else:
+        print("Making embeddings SINGLE")
+
         output_file = f"{IMAGE_FOLDER}/embeddings_full.pkl"
         extract_and_save_embeddings(input_folder, output_file)
