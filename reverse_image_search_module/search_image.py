@@ -2,7 +2,6 @@ import ast
 
 import numpy as np
 import pandas as pd
-import torchvision.transforms as transforms
 from annoy import AnnoyIndex
 from PIL import Image
 
@@ -68,7 +67,6 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=True):
         print("Loaded slow db:", embeddings_path, embeddings_filename_path)
 
         annoy_index = NearestVectorFinder(all_embeddings)
-
     dataset = pd.read_csv("./data/data.csv", low_memory=False)
     dataset["images"].fillna("[]", inplace=True)
 
@@ -102,7 +100,8 @@ def change_format(data):
 
 def find_index_from_image(img, n):
     if isinstance(img, np.ndarray):
-        img = Image.fromarray((img * 255).astype(np.uint8))
+        # img = Image.fromarray((img * 255).astype(np.uint8))
+        img = Image.fromarray(img)
     vector = img2vec.getVectors(img)
     vector = np.transpose(vector)
 
