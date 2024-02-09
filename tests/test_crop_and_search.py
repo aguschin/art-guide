@@ -59,7 +59,7 @@ def run_the_test(multi):
     positions = np.array(positions)
     print("Median Position:", statistics.median(positions))
     print("Mean Position:", positions.mean())
-    accuracy = (np.array(positions) < 1).mean()
+    accuracy = (positions < 1).mean()
     print("Top-1 accuracy: {}".format(accuracy))
     print("Top-10 accuracy: {}".format((positions < 10).mean()))
     print("Top-100 accuracy: {}".format((positions < 100).mean()))
