@@ -99,7 +99,7 @@ def change_format(data):
     }
 
 
-def find_index_from_image(img, n, times_to_crop=6):
+def find_index_from_image(img, n, times_to_crop=5):
     if isinstance(img, np.ndarray):
         img = Image.fromarray(img)
 
