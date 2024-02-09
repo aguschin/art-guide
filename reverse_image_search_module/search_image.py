@@ -11,6 +11,7 @@ from .resnet18 import (
     MULTI_VALES_OUTPUT_FILE,
     SINGLE_KEYS_OUTPUT_FILE,
     SINGLE_VALES_OUTPUT_FILE,
+    gen_multi_cropping,
     img2vec,
 )
 from .utils.vdb_slow import NearestVectorFinder
@@ -98,22 +99,34 @@ def change_format(data):
     }
 
 
-def find_index_from_image(img, n):
+def find_index_from_image(img, n, times_to_crop=6):
     if isinstance(img, np.ndarray):
-        # img = Image.fromarray((img * 255).astype(np.uint8))
         img = Image.fromarray(img)
-    vector = img2vec.getVectors(img)
-    vector = np.transpose(vector)
 
-    norm = np.linalg.norm(vector)
+    idxs, dists = [], []
 
-    vector = vector / norm
+    for x, y, x_end, y_end in gen_multi_cropping(
+        img.width, img.height, k=times_to_crop
+    ):
+        croped = img.crop((x, y, x_end, y_end))
 
-    idx, dist = annoy_index.get_nns_by_vector(
-        vector, n, search_k=-1, include_distances=True
-    )
+        vector = img2vec.getVectors(croped)
+        vector = np.transpose(vector)
+        norm = np.linalg.norm(vector)
+        vector = vector / norm
 
-    return idx, dist
+        idx, dist = annoy_index.get_nns_by_vector(
+            vector, n, search_k=-1, include_distances=True
+        )
+        idxs.extend(idx)
+        dists.extend(dist)
+
+    # sort and get top n
+    sorted_indices = sorted(range(len(dists)), key=lambda i: dists[i], reverse=True)
+    idxs = [idxs[i] for i in sorted_indices][:n]
+    dists = [dists[i] for i in sorted_indices][:n]
+
+    return idxs, dists
 
 
 def find_file_name(idx):

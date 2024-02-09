@@ -16,8 +16,6 @@ mylogger = logging.getLogger()
 def get_image_idx_name_matching(images_names):
     positive = 0
 
-    # import ipdb
-
     for _im in images_names:
         try:
             image = Image.open(os.path.join(DATA_IMAGES_PATH, _im))
@@ -27,9 +25,6 @@ def get_image_idx_name_matching(images_names):
             mylogger.info(f"image {_im} load error")
             mylogger.info(str(ex))
             continue
-
-        # print(_im)
-        # ipdb.set_trace()
 
         idx, _ = find_index_from_image(image, n=1)
         idx = idx[0]
