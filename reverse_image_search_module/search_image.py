@@ -2,7 +2,6 @@ import ast
 
 import numpy as np
 import pandas as pd
-import torchvision.transforms as transforms
 from annoy import AnnoyIndex
 from PIL import Image
 
@@ -12,6 +11,7 @@ from .resnet18 import (
     MULTI_VALES_OUTPUT_FILE,
     SINGLE_KEYS_OUTPUT_FILE,
     SINGLE_VALES_OUTPUT_FILE,
+    gen_multi_cropping,
     img2vec,
 )
 from .utils.vdb_slow import NearestVectorFinder
@@ -68,7 +68,6 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=True):
         print("Loaded slow db:", embeddings_path, embeddings_filename_path)
 
         annoy_index = NearestVectorFinder(all_embeddings)
-
     dataset = pd.read_csv("./data/data.csv", low_memory=False)
     dataset["images"].fillna("[]", inplace=True)
 
@@ -100,21 +99,34 @@ def change_format(data):
     }
 
 
-def find_index_from_image(img, n):
+def find_index_from_image(img, n, times_to_crop=6):
     if isinstance(img, np.ndarray):
-        img = Image.fromarray((img * 255).astype(np.uint8))
-    vector = img2vec.getVectors(img)
-    vector = np.transpose(vector)
+        img = Image.fromarray(img)
 
-    norm = np.linalg.norm(vector)
+    idxs, dists = [], []
 
-    vector = vector / norm
+    for x, y, x_end, y_end in gen_multi_cropping(
+        img.width, img.height, k=times_to_crop
+    ):
+        croped = img.crop((x, y, x_end, y_end))
 
-    idx, dist = annoy_index.get_nns_by_vector(
-        vector, n, search_k=-1, include_distances=True
-    )
+        vector = img2vec.getVectors(croped)
+        vector = np.transpose(vector)
+        norm = np.linalg.norm(vector)
+        vector = vector / norm
 
-    return idx, dist
+        idx, dist = annoy_index.get_nns_by_vector(
+            vector, n, search_k=-1, include_distances=True
+        )
+        idxs.extend(idx)
+        dists.extend(dist)
+
+    # sort and get top n
+    sorted_indices = sorted(range(len(dists)), key=lambda i: dists[i], reverse=True)
+    idxs = [idxs[i] for i in sorted_indices][:n]
+    dists = [dists[i] for i in sorted_indices][:n]
+
+    return idxs, dists
 
 
 def find_file_name(idx):

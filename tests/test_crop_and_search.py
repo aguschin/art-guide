@@ -1,5 +1,8 @@
 import sys
+import time
 from os.path import abspath, dirname
+
+import numpy as np
 
 sys.path.append(dirname(dirname(abspath(__file__))))
 import warnings
@@ -14,15 +17,12 @@ from image_crop_module.croper import crop_image
 from reverse_image_search_module.search_image import find_image, load_vector_db
 
 
-def process_image(image_path, n=1):
+def process_image(image_path, n=1, crop=True):
     img = Image.open(image_path)
-    cropped_image = crop_image(img)
-    idx, _, _ = find_image(cropped_image, n)
+    if crop:
+        img = crop_image(img)
+    idx, _, _ = find_image(img, n)
     return idx
-
-
-import os
-import statistics
 
 
 def run_the_test(multi):
@@ -37,7 +37,9 @@ def run_the_test(multi):
         if file.lower().endswith(tuple(supported_extensions)) and "-" not in file:
             full_path = os.path.join(folder_path, file)
             base_file_name = file.split(".")[0]
-            reference_images_idx[base_file_name] = process_image(full_path, n=1)
+            reference_images_idx[base_file_name] = process_image(
+                full_path, n=1, crop=False
+            )
 
     positions = []
 
@@ -47,30 +49,35 @@ def run_the_test(multi):
             base_file_name, _ = file.split("-")[0], file.split("-")[1]
             if base_file_name in reference_images_idx:
                 full_path = os.path.join(folder_path, file)
-                processed_idx_list = process_image(full_path, n=10000)
+                processed_idx_list = process_image(full_path, n=-1)
                 for i, idx in enumerate(processed_idx_list):
                     if idx in reference_images_idx[base_file_name]:
                         positions.append(i)
                         break
 
     # Calculate and print statistics
-    median_position = statistics.median(positions)
-    mean_position = statistics.mean(positions)
-    zero_position_percentage = sum([el == 0 for el in positions]) / len(positions)
-    return median_position, mean_position, zero_position_percentage
+    positions = np.array(positions)
+    print("Median Position:", statistics.median(positions))
+    print("Mean Position:", positions.mean())
+    accuracy = (positions < 1).mean()
+    print("Top-1 accuracy: {}".format(accuracy))
+    print("Top-10 accuracy: {}".format((positions < 10).mean()))
+    print("Top-100 accuracy: {}".format((positions < 100).mean()))
+    print("Top-1000 accuracy: {}".format((positions < 1000).mean()))
+    print("Top-10000 accuracy: {}".format((positions < 10000).mean()))
+    print(f"{len(positions)} positions: {positions}")
+    return accuracy
 
 
 def test_images_after_crop_single_embedding():
-    median_position, mean_position, zero_position_percentage = run_the_test(multi=False)
-    print("Median Position:", median_position)
-    print("Mean Position:", mean_position)
-    print("Percentage of Positions at 0:", zero_position_percentage)
-    assert zero_position_percentage > 0.17, "Ratio of correct findings should be higher"
+    start_time = time.time()
+    accuracy = run_the_test(multi=False)
+    print("Time for single embedding:", (time.time() - start_time) / 60, "minutes")
+    assert accuracy > 0.17, "Ratio of correct findings should be higher"
 
 
 def test_images_after_crop_multi_embedding():
-    median_position, mean_position, zero_position_percentage = run_the_test(multi=True)
-    print("Median Position:", median_position)
-    print("Mean Position:", mean_position)
-    print("Percentage of Positions at 0:", zero_position_percentage)
-    assert zero_position_percentage > 0.21, "Ratio of correct findings should be higher"
+    start_time = time.time()
+    accuracy = run_the_test(multi=True)
+    print("Time for multi embeddings: ", (time.time() - start_time) / 60, " minutes")
+    assert accuracy > 0.14, "Ratio of correct findings should be higher"

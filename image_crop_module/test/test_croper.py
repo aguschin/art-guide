@@ -6,8 +6,8 @@ from PIL import Image
 
 from ..distortion_sam_croper import distortion_crop_image
 
-DATA_MOST_CROP_PATH = "data/most_crop/"
-DATA_MOST_NOT_CROP_PATH = "data/most_no_crop/"
+DATA_MOST_CROP_PATH = "./data/most_crop/"
+DATA_MOST_NOT_CROP_PATH = "./data/most_no_crop/"
 
 
 logging.basicConfig(level=logging.INFO)

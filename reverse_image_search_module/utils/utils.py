@@ -3,7 +3,7 @@ import os
 import torchvision.transforms as transforms
 from PIL import Image
 
-from .search_image import find_image
+from ..search_image import find_image
 
 
 def make_syntetic_first_second_distances(folder_path, n=1000):
