@@ -36,7 +36,7 @@ def run_the_test(multi):
             full_path = os.path.join(folder_path, file)
             base_file_name = file.split(".")[0]
             reference_images_idx[base_file_name] = process_image(
-                full_path, n=1, crop=True
+                full_path, n=1, crop=False
             )
 
     positions = []
@@ -47,7 +47,7 @@ def run_the_test(multi):
             base_file_name, _ = file.split("-")[0], file.split("-")[1]
             if base_file_name in reference_images_idx:
                 full_path = os.path.join(folder_path, file)
-                processed_idx_list = process_image(full_path, n=10000)
+                processed_idx_list = process_image(full_path, n=-1)
                 for i, idx in enumerate(processed_idx_list):
                     if idx in reference_images_idx[base_file_name]:
                         positions.append(i)
@@ -69,7 +69,7 @@ def test_images_after_crop_single_embedding():
     print("Mean Position:", mean_position)
 
     print("Percentage of Positions at 0:", zero_position_percentage)
-    print(positions)
+    print(f"{len(positions)} positions: {positions}")
     print("Time for single embedding:", (time.time() - start_time) / 60, "minutes")
     assert zero_position_percentage > 0.17, "Ratio of correct findings should be higher"
 
@@ -82,6 +82,6 @@ def test_images_after_crop_multi_embedding():
     print("Median Position:", median_position)
     print("Mean Position:", mean_position)
     print("Percentage of Positions at 0:", zero_position_percentage)
-    print(positions)
+    print(f"{len(positions)} positions: {positions}")
     print("Time for multi embeddings: ", (time.time() - start_time) / 60, " minutes")
     assert zero_position_percentage > 0.21, "Ratio of correct findings should be higher"
