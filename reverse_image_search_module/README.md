@@ -6,20 +6,10 @@ This folder contains code for performing reverse image search using the ResNet-1
 
 ## Dependencies
 
-To use the code in this folder, you will need the following dependencies:
+You can install the dependencies using the following command:
 
-- Python 3.x
-- PyTorch
-- torchvision
-- numpy
-- pandas
-- matplotlib
-- annoy
-
-You can install these dependencies using the following command:
-
-```python
-pip install torch torchvision numpy pandas matplotlib annoy
+```shell
+pip install -r requirements.txt
 ```
 ## Usage
 
@@ -57,9 +47,9 @@ Visit: https://github.com/spotify/annoy
 - The Annoy Index is built using embeddings from a collection of images stored in a .npy file.
 - Initially, the dataset is divided into small clusters (called "forests" in Annoy). Each cluster contains a subset of data points.
 - In each cluster, a binary tree is built to recursively partition the data points based on their feature values.
-- When you query the Annoy index with a specific data point (query point), Annoy traverses the binary trees to find the cluster that is most likely to contain the nearest neighbors of the     
+- When you query the Annoy index with a specific data point (query point), Annoy traverses the binary trees to find the cluster that is most likely to contain the nearest neighbors of the
   query point. Annoy narrows down the search space by traversing only the relevant branches of the binary trees.
-- The Annoy Index performs approximate nearest neighbor search, meaning it might not always find the exact nearest neighbor but provides a good approximation. 
+- The Annoy Index performs approximate nearest neighbor search, meaning it might not always find the exact nearest neighbor but provides a good approximation.
 
 
 #### Example usage:
@@ -74,15 +64,15 @@ embedding_dim = all_embeddings.shape[1]
 # Build Annoy index
 annoy_index = AnnoyIndex(embedding_dim, metric='dot')
 for idx, vec in enumerate(all_embeddings):
-    vec = vec / np.linalg.norm(vec)
+    vec = vec / (np.linalg.norm(vec) + 1e-9)
     annoy_index.add_item(idx, vec)
-    
+
 num_trees = 50
 annoy_index.build(num_trees)
 ```
 
 #### Example usage:
-**Reverse Image Search** 
+**Reverse Image Search**
 
 ```python
 import matplotlib.pyplot as plt
@@ -105,7 +95,7 @@ To determine whether a retrieved image is a close match, you can compare the dis
 
 ```python
 # Example of using a distance threshold
-if dist < threshold:  
+if dist < threshold:
     print(f"Most similar image: {data['title']} (Distance: {dist:.2f})")
 else:
     print("No close match found. Consider refining your search.")
@@ -116,6 +106,14 @@ else:
 
 Here we get the dataset in a CSV file named wikiart_scraped.csv.
 
+## Tests
+
+To run the tests for the module use the following command
+
+```shell
+pytest reverse_image_search_module
+```
+
 ## Possible Future Steps
 
 ### Explore Different Models:
@@ -124,21 +122,20 @@ While we are using ResNet-18 for feature extraction, we consider trying other pr
 ### Data Migration from a file to DataBase:
 We are storing the embeddings in a single numpy file. we are planning to Extract the data from our numpy file, and then insert it into the database (Postgres/MYSQL). We will iterate through the numpy array and insert each embedding into the corresponding database table or collection.
 
-### Automated Testing: 
+### Automated Testing:
 Implement automated tests to validate any changes you make to the code. Automated tests can ensure that your modifications don't introduce regressions and that the core functionality remains intact.
 
-### Quality Metrics: 
+### Quality Metrics:
 Develop ways to measure the quality of your reverse image search results. You could consider metrics like precision, recall, or F1-score to evaluate the accuracy of the retrieved images.
 
 ### Optimize Search Speed:
 Investigate techniques to optimize the search speed further. This could involve adjusting parameters in the Annoy Index, experimenting with different distance metrics, or exploring GPU acceleration for feature extraction.
 
-### Interactive Web Interface: 
+### Interactive Web Interface:
 Extend the codebase to create an interactive web interface for users to upload images and perform reverse image searches. This could enhance user experience and make the tool more accessible.
 
-### Parallel Processing: 
+### Parallel Processing:
 Implement parallel processing techniques to speed up the extraction of embeddings and building of the Annoy Index, especially for large datasets.
 
-### Fine-Tuning: 
+### Fine-Tuning:
 If you have a specific domain or dataset, consider fine-tuning the pre-trained model on your data to improve the relevance of search results within that domain.
-

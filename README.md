@@ -1,14 +1,13 @@
 # Art-guide
-Your guide in the world of art.
-This telegram bot serves as an audio guide at Art Museums.
-You can upload a picture, and it will generate an audio description to which you can listen.
 
-https://t.me/harbour_art_guide_bot
+A telegram bot that can be your audio guide at Art Museums.
+Send a photo of an artwork, and it will generate an audio description to which you can listen to.
 
-[HackMD article about the project](https://hackmd.io/@aniervs/ryQt5Jlph)
+<img width="360" alt="image" src="https://github.com/aguschin/art-guide/assets/6797716/2f668aba-963c-44be-81fb-97d91e67aeb9">
 
+Try it out: https://t.me/harbour_art_guide_bot
 
-<img src="https://imgur.com/8xd8deQ.jpg"  width="60%" height="30%" alt="Demo"/>
+We developed this project during [the class in Harbour.Space](https://harbour.space/data-science/courses/practicing-ds-skills-in-ml-competitions-alexander-guschin-875).
 
 ---
 
@@ -16,24 +15,25 @@ https://t.me/harbour_art_guide_bot
 
 <img src="https://i.imgur.com/vRb0alE.jpg"  alt="Flow Diagram"/>
 
+[Read a HackMD article about the project](https://hackmd.io/@aniervs/ryQt5Jlph)
+
 ## Modules:
 
 ### Image Cropper
 This module is in charge of segmenting the image and cropping the relevant part of the image (for e.g. the painting in the image).
 
-
-You can go [here](image_crop_module/README.md) for more details about the image crop module.
+You can go [here](image_crop_module/README.md) for more details about the image crop module or read [this blog post](https://medium.com/@mjason98/paintings-extraction-from-images-art-guide-6002a749593e).
 
 
 ### Reverse Image Search
 This module is in charge of finding the most similar image to the input image in the database and return the relevant information about the image.
 
-You can go [here](reverse_image_search_module/README.md) for more details about the reverse image search module.
+You can go [here](reverse_image_search_module/README.md) for more details about the reverse image search module or read [this blog post](https://medium.com/@mohammadsanaee.n/your-ai-art-assistant-art-guide-9151433ab40a).
 
 
 ### Description Generation
 This module receives the relevant information of the found image and generates a description of the image, in a specific format.
-You can go [here](descriptor_module/README.md) for more details about the descriptor module.
+You can go [here](descriptor_module/README.md) for more details about the descriptor module or read [this blog post](https://medium.com/@ddunebari/your-guide-in-the-world-of-art-your-ai-museum-guide-1a087a132146).
 
 
 ### Text to Speech
@@ -47,7 +47,7 @@ You can go [here](text2speech_module/README.md) for more details about the text 
 3. The bot sends the cropped image to the reverse image search module.
 4. The reverse image search module finds the most similar image to the input image in the database, and returns it back to the bot with the relevant information.
 5. The bot evaluates if the found image is similar enough to the input image. In case it isn't, the bot tells the user that it couldn't find the image. In case it is, the bot sends the relevant information of the found image to the description generation module.
-6. The bot sends the description to the text to speech module. 
+6. The bot sends the description to the text to speech module.
 7. The bot sends the audio file to the user.
 
 ---
@@ -123,7 +123,3 @@ description = descriptor.describe(features_dict)
 
 print(description)
 ```
-
-
-
-

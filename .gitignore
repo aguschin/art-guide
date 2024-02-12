@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+cache
+image_search_modified/*
+
+*histogram*.png
+*.out
+
 # C extensions
 *.so
 
@@ -50,6 +56,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+*_mjtest.py
 
 # Translations
 *.mo
@@ -57,6 +64,7 @@ cover/
 
 # Django stuff:
 *.log
+logs/*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -158,3 +166,4 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
+.DS_Store

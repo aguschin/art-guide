@@ -1,10 +1,15 @@
-from transformers import SegformerImageProcessor
-from transformers import SegformerForSemanticSegmentation
-import torch
-import cv2
-import numpy as np
 import math
 
+import cv2
+import numpy as np
+import torch
+from transformers import SegformerForSemanticSegmentation, SegformerImageProcessor
+
+from .cropper_utils import (
+    find_aspect_ratio,
+    find_width_height_aspect_ratio,
+    side_distance,
+)
 
 MODEL_NAME = "nvidia/segformer-b0-finetuned-ade-512-512"
 
@@ -13,13 +18,6 @@ processor = SegformerImageProcessor.from_pretrained(MODEL_NAME)
 model = SegformerForSemanticSegmentation.from_pretrained(MODEL_NAME)
 
 painting_id = 22
-
-
-def side_distance(p1, p2):
-    # euclidian
-    dd = (p1 - p2) ** 2
-    dd = dd.sum()
-    return dd
 
 
 def point_interseption(l1, l2):
@@ -53,8 +51,7 @@ def point_interseption(l1, l2):
 
 
 def select_corner(point_list, ref_point):
-    point = max(point_list,
-                key=lambda x: x[0]*ref_point[0] + x[1]*ref_point[1])
+    point = max(point_list, key=lambda x: x[0] * ref_point[0] + x[1] * ref_point[1])
     return point
 
 
@@ -69,8 +66,7 @@ def make_corners(point_list):
         point_list = point_list[::-1]
 
     # firs corner point
-    first_corner = max(enumerate(point_list),
-                       key=lambda x: -x[1][0] - x[1][1])[0]
+    first_corner = max(enumerate(point_list), key=lambda x: -x[1][0] - x[1][1])[0]
 
     # shift the points
     point_list = point_list[first_corner:] + point_list[:first_corner]
@@ -95,7 +91,7 @@ def make_four_points(poligon):
 
     points_distance = []
     for i in range(points.shape[0]):
-        iplus = (i+1) % points.shape[0]
+        iplus = (i + 1) % points.shape[0]
 
         p1, p2 = points[i], points[iplus]
         distance = side_distance(p1, p2)
@@ -112,7 +108,7 @@ def make_four_points(poligon):
 
     for i in range(4):
         pos_1 = i
-        pos_2 = (i+1) % 4
+        pos_2 = (i + 1) % 4
 
         l1 = (points_distance[pos_1][1], points_distance[pos_1][2])
         l2 = (points_distance[pos_2][1], points_distance[pos_2][2])
@@ -134,10 +130,10 @@ def adjust_points_and_padd(point_list, IW, IH):
     right_pad = 0
 
     for point in point_list:
-        bottom_pad = max(bottom_pad, max(0, point[1]-IH))
+        bottom_pad = max(bottom_pad, max(0, point[1] - IH))
         top_pad = max(top_pad, max(0, -1 * point[1]))
 
-        right_pad = max(right_pad, max(0, point[0]-IW))
+        right_pad = max(right_pad, max(0, point[0] - IW))
         left_pad = max(left_pad, max(0, -1 * point[0]))
 
     top_pad = math.ceil(top_pad)
@@ -155,7 +151,6 @@ def adjust_points_and_padd(point_list, IW, IH):
 
 
 def find_best_contour(contours, W, H):
-
     distances_and_areas = []
     area_threshold = 0
 
@@ -170,32 +165,31 @@ def find_best_contour(contours, W, H):
         else:
             Cx, Cy = 0, 0
 
-        D = (W/2 - Cx) ** 2 + (H/2 - Cy) ** 2
+        D = (W / 2 - Cx) ** 2 + (H / 2 - Cy) ** 2
 
         distances_and_areas.append((i, area, D))
         area_threshold = max(area_threshold, area)
 
     area_threshold = area_threshold * 0.8
 
-    selected = min(distances_and_areas,
-                   key=lambda x: x[2] if x[1] >= area_threshold else 1e9)
+    selected = min(
+        distances_and_areas, key=lambda x: x[2] if x[1] >= area_threshold else 1e9
+    )
 
-    convex_hull = cv2.convexHull(contours[selected[0]])
-
-    return convex_hull, selected[1]
+    return contours[selected[0]], selected[1]
 
 
 @torch.no_grad()
 def distortion_crop_image(image):
-    '''
-        image: pilow image
-        return: croped image, proportion of croping
-    '''
+    """
+    image: pilow image
+    return: croped image, proportion of croping
+    """
 
     # original size
     OW = image.width
     OH = image.height
-    image_area = OW*OH
+    image_area = OW * OH
 
     # generate the mask-segmentation
     inputs = processor(images=image, return_tensors="pt")
@@ -210,15 +204,14 @@ def distortion_crop_image(image):
     IH = mask.shape[1]
 
     # find contours
-    contours, _ = cv2.findContours(mask,
-                                   cv2.RETR_EXTERNAL,
-                                   cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # no painting found
     if len(contours) < 1:
         return np.array(image, dtype=np.float32) / 255.0, 1
 
     contour, raw_contour_area = find_best_contour(contours, IW, IH)
+    contour = cv2.convexHull(contour)
 
     # the area of the segemented area is too small
     if raw_contour_area < 500:
@@ -236,7 +229,8 @@ def distortion_crop_image(image):
     # try to remove this in the final
     # todo: add support for padding with negative interseption
     points, top_pad, bottom_pad, left_pad, right_pad = adjust_points_and_padd(
-                                                        points, IW, IH)
+        points, IW, IH
+    )
 
     # adjust images sizes
     OW += left_pad + right_pad
@@ -245,16 +239,18 @@ def distortion_crop_image(image):
     IH += top_pad + bottom_pad
 
     image_np = np.array(image, dtype=np.float32) / 255.0
-    image_np = cv2.copyMakeBorder(image_np,
-                                  top_pad,
-                                  bottom_pad,
-                                  left_pad,
-                                  right_pad,
-                                  cv2.BORDER_CONSTANT,
-                                  value=(0, 0, 0))  # padding color
+    image_np = cv2.copyMakeBorder(
+        image_np,
+        top_pad,
+        bottom_pad,
+        left_pad,
+        right_pad,
+        cv2.BORDER_CONSTANT,
+        value=(0, 0, 0),
+    )  # padding color
 
     # make wraping matrix
-    src_points = points * np.array([[OW/IW, OH/IH]])
+    src_points = points * np.array([[OW / IW, OH / IH]])
     src_points = src_points.astype(np.float32)
 
     # final shape
@@ -263,8 +259,7 @@ def distortion_crop_image(image):
     corner3 = (OW, OH)
     corner4 = (0, OH)
 
-    dst_points = np.array([corner1, corner2, corner3, corner4],
-                          dtype=np.float32)
+    dst_points = np.array([corner1, corner2, corner3, corner4], dtype=np.float32)
 
     area_proportion = poligon_area_from_points(src_points)
     area_proportion /= image_area
@@ -275,4 +270,13 @@ def distortion_crop_image(image):
     # Apply the perspective warp to the image
     warped_image = cv2.warpPerspective(image_np, matrix, (OW, OH))
 
-    return warped_image, area_proportion
+    # Adjust aspect ratio of wraping
+    aspect_ratio = find_aspect_ratio(src_points)
+    wh_aa = find_width_height_aspect_ratio(src_points, aspect_ratio)
+
+    aa_width = min(OW, OH)
+    aa_height = aa_width * wh_aa
+
+    resized_aa_image = cv2.resize(warped_image, (int(aa_width), int(aa_height)))
+
+    return resized_aa_image, area_proportion
