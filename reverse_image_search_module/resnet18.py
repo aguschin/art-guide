@@ -7,10 +7,12 @@ import numpy as np
 import PIL
 import torch
 import torchvision
+import torchvision.transforms.functional as F
 from decouple import config
 from PIL import Image
 from torchvision import transforms
 from tqdm import tqdm
+from transformers import AutoImageProcessor, AutoModel
 
 # Disable all warnings
 warnings.filterwarnings("ignore")
@@ -29,43 +31,26 @@ torch.manual_seed(17)
 
 class Img2VecResnet18:
     def __init__(self, batch_size=64):
-        self.device = torch.device("cpu")  # Use CPU explicitly
-        self.numberFeatures = 512
-        self.modelName = "resnet-18"
-        self.model, self.featureLayer = self.getFeatureLayer()
-        self.model = self.model.to(self.device)
+        self.device = torch.device("cpu")
+        self.model_name = "facebook/dinov2-base"
+        self.feature_extractor = AutoImageProcessor.from_pretrained(self.model_name)
+        self.model = AutoModel.from_pretrained(self.model_name).to(self.device)
         self.model.eval()
-        self.toTensor = transforms.ToTensor()
-        self.normalize = transforms.Normalize(
-            mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-        )
         self.batch_size = batch_size
 
-    def getFeatureLayer(self):
-        cnnModel = torchvision.models.resnet18(pretrained=True)
-        layer = cnnModel._modules.get("avgpool")
-        self.layer_output_size = 512
-
-        return cnnModel, layer
-
     def preprocess_image(self, image):
-        transformationForCNNInput = transforms.Compose([transforms.Resize((224, 224))])
-        if type(image) != torch.Tensor:
-            image = self.toTensor(image)
-        image = transformationForCNNInput(image)
-        return self.normalize(image).unsqueeze(0).to(self.device)
+        if not isinstance(image, torch.Tensor):
+            image = self.feature_extractor(images=image, return_tensors="pt").to(
+                self.device
+            )
+        return image
 
     def getVectors(self, images):
-        images = self.preprocess_image(images)
-        embedding = torch.zeros(self.batch_size, self.numberFeatures, 1, 1)
-
-        def copyData(m, i, o):
-            embedding.copy_(o.data)
-
-        h = self.featureLayer.register_forward_hook(copyData)
-        self.model(images)
-        h.remove()
-        return embedding.numpy()[:, :, 0, 0]
+        with torch.no_grad():
+            inputs = self.preprocess_image(images)
+            outputs = self.model(**inputs)
+            embeddings = outputs.last_hidden_state[:, 0, :]
+        return embeddings.cpu().numpy()
 
 
 img2vec = Img2VecResnet18(batch_size=1)
@@ -90,10 +75,10 @@ def extract_and_save_embeddings(input_folder, output_file):
         try:
             image = Image.open(image_path)
 
-            vectors = [img2vec.getVectors(image)]
-
-            embeddings_dict[image_file] = vectors
-
+            vector = img2vec.getVectors(image)
+            embeddings_dict[
+                image_file
+            ] = vector.tolist()  # Convert to list for serialization
             counter += 1
         except Exception as e:
             print(f"Skipping image: {image_file} - Error: {str(e)}")
@@ -110,9 +95,9 @@ def make_points(point1, point2, width, height):
     return point1[0] * width, point1[1] * height, point2[0] * width, point2[1] * height
 
 
-def gen_multi_cropping(width, height, k=6, min_size_random=128):
+def gen_multi_cropping(width, height, k=5, min_size_random=128):
     """
-    6 default croppings are made by hand, the rest are random
+    5 default croppings are made by hand, the rest are random
     """
 
     DEFAULT_CROPP = [
@@ -124,7 +109,7 @@ def gen_multi_cropping(width, height, k=6, min_size_random=128):
     ]
 
     for i in range(k):
-        if i < 6:
+        if i < 5:
             default_points = DEFAULT_CROPP[i]
             x, y, xend, yend = make_points(
                 default_points[0], default_points[1], width, height

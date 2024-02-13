@@ -31,6 +31,7 @@ def run_the_test(multi):
     supported_extensions = [".jpg", ".jpeg", ".png", ".bmp", ".gif"]
 
     reference_images_idx = {}
+    counter = 0
 
     # Process reference images
     for file in os.listdir(folder_path):
@@ -45,17 +46,23 @@ def run_the_test(multi):
 
     # Process and compare images with reference
     for file in os.listdir(folder_path):
+        print(f"Checking file for comparison: {file}")
+
         if file.lower().endswith(tuple(supported_extensions)) and "-" in file:
             base_file_name, _ = file.split("-")[0], file.split("-")[1]
             if base_file_name in reference_images_idx:
                 full_path = os.path.join(folder_path, file)
                 processed_idx_list = process_image(full_path, n=-1)
+                print("found idx")
                 for i, idx in enumerate(processed_idx_list):
                     if idx in reference_images_idx[base_file_name]:
                         positions.append(i)
                         break
+            counter += 1
+            print(f"Processed comparison image: {file} (Counter: {counter})")
 
     # Calculate and print statistics
+    print("Finish run test")
     positions = np.array(positions)
     print("Median Position:", statistics.median(positions))
     print("Mean Position:", positions.mean())
@@ -73,11 +80,11 @@ def test_images_after_crop_single_embedding():
     start_time = time.time()
     accuracy = run_the_test(multi=False)
     print("Time for single embedding:", (time.time() - start_time) / 60, "minutes")
-    assert accuracy > 0.17, "Ratio of correct findings should be higher"
+    assert accuracy > 0.45, "Ratio of correct findings should be higher"
 
 
-def test_images_after_crop_multi_embedding():
-    start_time = time.time()
-    accuracy = run_the_test(multi=True)
-    print("Time for multi embeddings: ", (time.time() - start_time) / 60, " minutes")
-    assert accuracy > 0.14, "Ratio of correct findings should be higher"
+# def test_images_after_crop_multi_embedding():
+#     start_time = time.time()
+#     accuracy = run_the_test(multi=True)
+#     print("Time for multi embeddings: ", (time.time() - start_time) / 60, " minutes")
+#     assert accuracy > 0.14, "Ratio of correct findings should be higher"

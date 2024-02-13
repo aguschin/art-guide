@@ -1,9 +1,11 @@
 import ast
+import time
 
 import numpy as np
 import pandas as pd
 from annoy import AnnoyIndex
 from PIL import Image
+from torchvision import transforms
 
 from .resnet18 import (
     MULTI_EMBEDDINGS,
@@ -47,7 +49,7 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=True):
     )
 
     all_embeddings = np.load(embeddings_path)
-    embedding_dim = all_embeddings.shape[2]
+    embedding_dim = all_embeddings.shape[1]
     file_names = np.load(embeddings_filename_path)
 
     if vdb:
@@ -63,6 +65,8 @@ def load_vector_db(multi=MULTI_EMBEDDINGS, reload=False, vdb=True):
 
         num_trees = 50
         annoy_index.build(num_trees)
+        print(f"names size: {file_names.shape}")
+        print(f"embedding size: {all_embeddings.shape}")
 
     else:
         print("Loaded slow db:", embeddings_path, embeddings_filename_path)
@@ -96,7 +100,12 @@ def change_format(data):
         "description": data["WikiDescription"],
         "tags": data["Tags"],
         "image_url": data["image_urls"],
+        "file_name": data["file_name"],
     }
+
+
+def find_file_name(idx):
+    return file_names[idx]
 
 
 def find_index_from_image(img, n, times_to_crop=5):
@@ -129,16 +138,11 @@ def find_index_from_image(img, n, times_to_crop=5):
     return idxs, dists
 
 
-def find_file_name(idx):
-    return file_names[idx]
-
-
 def find_image(img, n=1):
     if type(n) != int:
         n = 1
 
     idx, dist = find_index_from_image(img, n)
-
     file_n = find_file_name(idx)
 
     selected_indices = dataset[dataset["file_name"].isin(file_n)].index.tolist()
@@ -148,5 +152,4 @@ def find_image(img, n=1):
     data = selected_data.apply(
         lambda row: change_format(row.to_dict()), axis=1
     ).tolist()
-
     return idx, dist, data
