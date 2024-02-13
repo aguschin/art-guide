@@ -33,7 +33,7 @@ def run_all_models(filename, photo_url, verbose=False, k_neibours=1):
         pil_img = Image.fromarray((cropped_image).astype(np.uint8))
         pil_img.save(image_filename)
 
-    if distance[0] < 0.9:
+    if distance[0] < 0.8:
         return_body = {"error": "Sorry, I couldn't find a match for that image."}
 
         if verbose:
