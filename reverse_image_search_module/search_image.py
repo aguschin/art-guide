@@ -143,9 +143,7 @@ def find_image(img, n=1):
         n = 1
 
     idx, dist = find_index_from_image(img, n)
-    file_n = 
-    
-    (idx)
+    file_n = find_file_name(idx)
 
     selected_indices = dataset[dataset["file_name"].isin(file_n)].index.tolist()
 
