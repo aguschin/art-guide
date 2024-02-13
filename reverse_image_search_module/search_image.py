@@ -108,7 +108,7 @@ def find_file_name(idx):
     return file_names[idx]
 
 
-def find_index_from_image(img, n, times_to_crop=6):
+def find_index_from_image(img, n, times_to_crop=5):
     if isinstance(img, np.ndarray):
         img = Image.fromarray(img)
 

@@ -95,22 +95,21 @@ def make_points(point1, point2, width, height):
     return point1[0] * width, point1[1] * height, point2[0] * width, point2[1] * height
 
 
-def gen_multi_cropping(width, height, k=6, min_size_random=128):
+def gen_multi_cropping(width, height, k=5, min_size_random=128):
     """
-    6 default croppings are made by hand, the rest are random
+    5 default croppings are made by hand, the rest are random
     """
 
     DEFAULT_CROPP = [
         [(0, 0), (1, 1)],
+        [(0.05, 0.05), (0.95, 0.95)],
+        [(0.1, 0.1), (0.9, 0.9)],
+        [(0.15, 0.15), (0.85, 0.85)],
         [(0.25, 0.25), (0.75, 0.75)],
-        [(0, 0), (0.5, 0.5)],
-        [(0.5, 0), (1, 0.5)],
-        [(0, 0.5), (0.5, 1)],
-        [(0.5, 0.5), (1, 1)],
     ]
 
     for i in range(k):
-        if i < 6:
+        if i < 5:
             default_points = DEFAULT_CROPP[i]
             x, y, xend, yend = make_points(
                 default_points[0], default_points[1], width, height
