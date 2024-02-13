@@ -56,7 +56,8 @@ def handle_image(message):
 
         bot.send_message(message.chat.id, f"DB: Distance {kn_distance}")
         bot.send_message(message.chat.id, f"DB: Metadata")
-        bot.send_message(message.chat.id, metadata)
+        for x in range(0, len(metadata), 4095):
+            bot.send_message(message.chat.id, metadata[x:x+4095])
 
         with open(img_crp, "rb") as photo_crp:
             bot.send_photo(
