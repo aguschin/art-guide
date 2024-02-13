@@ -74,7 +74,7 @@ def handle_image(message):
         audio = open(filename, "rb")
         bot.send_audio(message.chat.id, audio)
         audio.close()
-        os.system(f"rm {filename}")
+        # os.system(f"rm {filename}")
     else:
         print(response.content)
         print("Error calling API.")
