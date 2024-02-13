@@ -101,52 +101,7 @@ def change_format(data):
         "tags": data["Tags"],
         "image_url": data["image_urls"],
         "file_name": data["file_name"],
-        "author_name": data["Author"],
-        "style": data["Styles"],
-        "date": data["Date"],
-        "id": data["Id"],
-        "url": data["URL"],
-        "title": data["Title"],
-        "original_title": data["OriginalTitle"],
-        "series": data["Series"],
-        "genre": data["Genre"],
-        "media": data["Media"],
-        "location": data["Location"],
-        "dimension": data["Dimensions"],
-        "description": data["WikiDescription"],
-        "tags": data["Tags"],
-        "image_url": data["image_urls"],
     }
-
-
-def find_index_from_image(img, n, times_to_crop=6):
-    if isinstance(img, np.ndarray):
-        img = Image.fromarray(img)
-
-    idxs, dists = [], []
-
-    for x, y, x_end, y_end in gen_multi_cropping(
-        img.width, img.height, k=times_to_crop
-    ):
-        croped = img.crop((x, y, x_end, y_end))
-
-        vector = img2vec.getVectors(croped)
-        vector = np.transpose(vector)
-        norm = np.linalg.norm(vector)
-        vector = vector / norm
-
-        idx, dist = annoy_index.get_nns_by_vector(
-            vector, n, search_k=-1, include_distances=True
-        )
-        idxs.extend(idx)
-        dists.extend(dist)
-
-    # sort and get top n
-    sorted_indices = sorted(range(len(dists)), key=lambda i: dists[i], reverse=True)
-    idxs = [idxs[i] for i in sorted_indices][:n]
-    dists = [dists[i] for i in sorted_indices][:n]
-
-    return idxs, dists
 
 
 def find_file_name(idx):
@@ -184,16 +139,11 @@ def find_index_from_image(img, n, times_to_crop=6):
 
 
 def find_image(img, n=1):
-    print("start find image")
-    start_time = time.time()
     if type(n) != int:
         n = 1
 
     idx, dist = find_index_from_image(img, n)
-    print("found idx {idx}")
-
     file_n = find_file_name(idx)
-    print("found file name {file_n}")
 
     selected_indices = dataset[dataset["file_name"].isin(file_n)].index.tolist()
 
@@ -202,5 +152,4 @@ def find_image(img, n=1):
     data = selected_data.apply(
         lambda row: change_format(row.to_dict()), axis=1
     ).tolist()
-    print(f"finish find image in {time.time()-start_time}")
     return idx, dist, data

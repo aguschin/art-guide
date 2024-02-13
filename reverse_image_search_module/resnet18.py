@@ -32,18 +32,11 @@ torch.manual_seed(17)
 class Img2VecResnet18:
     def __init__(self, batch_size=64):
         self.device = torch.device("cpu")
-        self.model_name = 'facebook/dinov2-base'
+        self.model_name = "facebook/dinov2-base"
         self.feature_extractor = AutoImageProcessor.from_pretrained(self.model_name)
         self.model = AutoModel.from_pretrained(self.model_name).to(self.device)
         self.model.eval()
         self.batch_size = batch_size
-
-    # def getFeatureLayer(self):
-    #     cnnModel = torchvision.models.resnet18(pretrained=True)
-    #     layer = cnnModel._modules.get("avgpool")
-    #     self.layer_output_size = 512
-
-    #     return cnnModel, layer
 
     def preprocess_image(self, image):
         if not isinstance(image, torch.Tensor):
