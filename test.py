@@ -15,6 +15,7 @@ current_directory = os.path.dirname(os.path.realpath(__file__))
 data_folder = 'data'
 image_filename = 'leo.jpg'
 
+
 def send_image_to_bot(client, chat_id, image_path):
     try:
         with open(image_path, 'rb') as file:
@@ -22,9 +23,11 @@ def send_image_to_bot(client, chat_id, image_path):
     except Exception as e:
         print(f"Error sending image to bot: {e}")
 
+
 def generate_expected_filename(artist_name, artwork_title):
     expected_filename = f"{artist_name} - {artwork_title}"
     return expected_filename
+
 
 def check_audio_generation(client, chat_id, timeout_seconds):
     start_time = time.time()
@@ -54,6 +57,7 @@ def check_audio_generation(client, chat_id, timeout_seconds):
                         else:
                             # print(f"Unexpected audio file found: {file_name}")
                             return f"Unexpected audio file found: {file_name}"
+
 
 def main():
     with TelegramClient('anon', API_ID, API_HASH) as client:
