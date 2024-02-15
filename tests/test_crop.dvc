@@ -1,0 +1,6 @@
+outs:
+- md5: 92d4d6f76fcf9bd59afac93a45f15036.dir
+  size: 45382106
+  nfiles: 111
+  hash: md5
+  path: test_crop

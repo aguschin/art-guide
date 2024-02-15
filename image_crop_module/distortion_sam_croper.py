@@ -3,7 +3,14 @@ import math
 import cv2
 import numpy as np
 import torch
+from segment_anything import SamPredictor, sam_model_registry
 from transformers import SegformerForSemanticSegmentation, SegformerImageProcessor
+
+SAM_MODELS = {
+    "vit_h": "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth",
+    "vit_l": "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_l_0b3195.pth",
+    "vit_b": "https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth",
+}
 
 from .cropper_utils import (
     find_aspect_ratio,
@@ -18,6 +25,26 @@ processor = SegformerImageProcessor.from_pretrained(MODEL_NAME)
 model = SegformerForSemanticSegmentation.from_pretrained(MODEL_NAME)
 
 painting_id = 22
+
+
+def load_sam():
+    global sam
+
+    sam_type = "vit_h"
+    checkpoint_url = SAM_MODELS[sam_type]
+
+    sam_ck = sam_model_registry[sam_type]()
+    state_dict = torch.hub.load_state_dict_from_url(checkpoint_url)
+    sam_ck.load_state_dict(state_dict, strict=True)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    sam_ck.to(device=device)
+    sam = SamPredictor(sam_ck)
+
+
+sam = None
+load_sam()
 
 
 def point_interseption(l1, l2):
@@ -84,10 +111,24 @@ def poligon_area_from_points(vertices):
     return area
 
 
+def calc_bbox_from_points(points):
+    mi_x, mi_y = points[:, 0].min(), points[:, 1].min()
+    ma_x, ma_y = points[:, 0].max(), points[:, 1].max()
+
+    return [(mi_x, mi_y), (ma_x, mi_y), (ma_x, ma_y), (mi_x, ma_y)]
+
+
 def make_four_points(poligon):
     points = poligon.reshape(-1, 2)
 
-    assert poligon.shape[0] > 3
+    assert poligon.shape[0] > 2
+
+    if poligon.shape[0] == 3:
+        # calc a bounding box
+        bbox = calc_bbox_from_points(points)
+        corner_oriented_bbox = make_corners(bbox)
+
+        return corner_oriented_bbox
 
     points_distance = []
     for i in range(points.shape[0]):
@@ -150,37 +191,8 @@ def adjust_points_and_padd(point_list, IW, IH):
 #  ------------------------------------------------------------------
 
 
-def find_best_contour(contours, W, H):
-    distances_and_areas = []
-    area_threshold = 0
-
-    for i, contour in enumerate(contours):
-        M = cv2.moments(contour)
-
-        area = M["m00"]
-
-        if area != 0:
-            Cx = int(M["m10"] / area)
-            Cy = int(M["m01"] / area)
-        else:
-            Cx, Cy = 0, 0
-
-        D = (W / 2 - Cx) ** 2 + (H / 2 - Cy) ** 2
-
-        distances_and_areas.append((i, area, D))
-        area_threshold = max(area_threshold, area)
-
-    area_threshold = area_threshold * 0.8
-
-    selected = min(
-        distances_and_areas, key=lambda x: x[2] if x[1] >= area_threshold else 1e9
-    )
-
-    return contours[selected[0]], selected[1]
-
-
 @torch.no_grad()
-def distortion_crop_image(image):
+def generate_mask(image, minimun_area=100, dp_box=3):
     """
     image: pilow image
     return: croped image, proportion of croping
@@ -203,21 +215,126 @@ def distortion_crop_image(image):
     IW = mask.shape[0]
     IH = mask.shape[1]
 
+    # find bboxes
+    mask = cv2.dilate(mask.astype(np.uint8), None, iterations=1)
+    num_labels, _, stats, centroids = cv2.connectedComponentsWithStats(
+        mask, connectivity=8
+    )
+
+    boxes = []
+    area_threshold = 0
+
+    image_array = np.asarray(image)
+
+    for i in range(1, num_labels):  # Start from 1 to ignore background component
+        x, y, w, h, area = stats[i]
+
+        # distance to the center
+        D = (IW / 2 - centroids[i][0]) ** 2 + (IH / 2 - centroids[i][1]) ** 2
+
+        if area > minimun_area:
+            boxes.append((x, y, x + w, y + h, D, area))
+            area_threshold = max(area_threshold, area)
+
+    if len(boxes) == 0:
+        return image_array, np.zeros(image_array.shape, dtype=np.uint8), False
+
+    area_threshold *= 0.8
+
+    selected = min(boxes, key=lambda x: x[4] if x[5] >= area_threshold else 1e9)
+
+    x, y, w, h, _, _ = selected
+    # convert boxes cordinates to the original image shape
+    x, y, w, h = (x / IW) * OW, (y / IH) * OH, (w / IW) * OW, (h / IH) * OH
+    # expand the boxes
+    x, y, w, h = (
+        max(0, x - dp_box),
+        max(0, y - dp_box),
+        min(OW - 1, w + dp_box),
+        min(OH - 1, h + dp_box),
+    )
+
+    boxes = [(x, y, w, h)]
+
+    sam.set_image(image_array)
+
+    # using sam up to 2sc
+    boxes_np = torch.Tensor(boxes)
+    transformed_boxes = sam.transform.apply_boxes_torch(boxes_np, image_array.shape[:2])
+    mask, _, _ = sam.predict_torch(
+        point_coords=None,
+        point_labels=None,
+        boxes=transformed_boxes.to(sam.device),
+        multimask_output=False,
+    )
+
+    mask = mask.squeeze().cpu().numpy().astype(np.uint8)
+
+    return image_array, mask, True
+
+
+def find_best_contour(contours, W, H):
+    distances_and_areas = []
+    area_threshold = 0
+
+    for i, contour in enumerate(contours):
+        M = cv2.moments(contour)
+
+        area = M["m00"] if len(contour) > 3 else 0
+
+        if area != 0:
+            Cx = int(M["m10"] / area)
+            Cy = int(M["m01"] / area)
+        else:
+            Cx, Cy = 0, 0
+
+        D = (W / 2 - Cx) ** 2 + (H / 2 - Cy) ** 2
+
+        distances_and_areas.append((i, area, D))
+        area_threshold = max(area_threshold, area)
+
+    area_threshold = area_threshold * 0.8
+
+    selected = min(
+        distances_and_areas, key=lambda x: x[2] if x[1] >= area_threshold else 1e9
+    )
+
+    return contours[selected[0]], selected[1]
+
+
+def distortion_crop_image(image):
+    """
+    image: pilow image
+    return: croped image, proportion of croping
+    """
+
+    # import ipdb
+
+    # ipdb.set_trace()
+
+    image, mask, flag = generate_mask(image, 800, 3)
+
+    if not flag:
+        return image, 1
+
     # find contours
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # no painting found
     if len(contours) < 1:
-        return np.array(image, dtype=np.float32) / 255.0, 1
+        return image, 1
 
-    contour, raw_contour_area = find_best_contour(contours, IW, IH)
-    contour = cv2.convexHull(contour)
+    contour, raw_contour_area = find_best_contour(
+        contours, mask.shape[0], mask.shape[1]
+    )
 
     # the area of the segemented area is too small
-    if raw_contour_area < 500:
-        return np.array(image, dtype=np.float32) / 255.0, 1
+    if raw_contour_area < 800:
+        return image, 1
 
     del contours
+
+    contour = cv2.convexHull(contour)
 
     # approximate a poligon
     epsilon = 0.02 * cv2.arcLength(contour, True)
@@ -226,41 +343,33 @@ def distortion_crop_image(image):
     # fit a 4-side poligon, and return 4 corners points
     points = make_four_points(poligon)
 
-    # try to remove this in the final
     # todo: add support for padding with negative interseption
     points, top_pad, bottom_pad, left_pad, right_pad = adjust_points_and_padd(
-        points, IW, IH
+        points, image.shape[0], image.shape[1]
     )
 
-    # adjust images sizes
-    OW += left_pad + right_pad
-    IW += left_pad + right_pad
-    OH += top_pad + bottom_pad
-    IH += top_pad + bottom_pad
-
-    image_np = np.array(image, dtype=np.float32) / 255.0
+    # image_np = np.array(image, dtype=np.float32) / 255.0
     image_np = cv2.copyMakeBorder(
-        image_np,
+        image,
         top_pad,
         bottom_pad,
         left_pad,
         right_pad,
         cv2.BORDER_CONSTANT,
         value=(0, 0, 0),
-    )  # padding color
+    )
 
-    # make wraping matrix
-    src_points = points * np.array([[OW / IW, OH / IH]])
-    src_points = src_points.astype(np.float32)
+    src_points = points.astype(np.float32)
 
     # final shape
     corner1 = (0, 0)
-    corner2 = (OW, 0)
-    corner3 = (OW, OH)
-    corner4 = (0, OH)
+    corner2 = (image_np.shape[0], 0)
+    corner3 = (image_np.shape[0], image_np.shape[1])
+    corner4 = (0, image_np.shape[1])
 
     dst_points = np.array([corner1, corner2, corner3, corner4], dtype=np.float32)
 
+    image_area = image.shape[0] * image.shape[1]
     area_proportion = poligon_area_from_points(src_points)
     area_proportion /= image_area
 
@@ -268,13 +377,15 @@ def distortion_crop_image(image):
     matrix = cv2.getPerspectiveTransform(src_points, dst_points)
 
     # Apply the perspective warp to the image
-    warped_image = cv2.warpPerspective(image_np, matrix, (OW, OH))
+    warped_image = cv2.warpPerspective(
+        image_np, matrix, (image_np.shape[0], image_np.shape[1])
+    )
 
     # Adjust aspect ratio of wraping
     aspect_ratio = find_aspect_ratio(src_points)
     wh_aa = find_width_height_aspect_ratio(src_points, aspect_ratio)
 
-    aa_width = min(OW, OH)
+    aa_width = min(image_np.shape[0], image_np.shape[1])
     aa_height = aa_width * wh_aa
 
     resized_aa_image = cv2.resize(warped_image, (int(aa_width), int(aa_height)))

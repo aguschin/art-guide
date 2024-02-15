@@ -1,4 +1,5 @@
 from openai import OpenAI
+from decouple import config
 
 
 def generate_prompt(inputd: dict):
@@ -52,7 +53,7 @@ def generate_prompt(inputd: dict):
 
 
 def gpt_generation(inputd: dict):
-    client = OpenAI()
+    client = OpenAI(api_key=config("OPENAI_API_KEY"))
 
     prompt = generate_prompt(inputd)
 

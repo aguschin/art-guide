@@ -1,22 +1,24 @@
 import os
-from PIL import Image
+
 import torchvision.transforms as transforms
-from .search_image import find_image
+from PIL import Image
+
+from ..search_image import find_image
 
 
 def make_syntetic_first_second_distances(folder_path, n=1000):
-    augmentation_transforms = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.RandomRotation(5),
-        # transforms.RandomHorizontalFlip(),
-        transforms.ColorJitter(brightness=0.2,
-                               contrast=0.2,
-                               saturation=0.2,
-                               hue=0.05),
-        transforms.RandomResizedCrop(224,
-                                     scale=(0.9, 1.0)),
-        transforms.ToTensor(),
-    ])
+    augmentation_transforms = transforms.Compose(
+        [
+            transforms.Resize((224, 224)),
+            transforms.RandomRotation(5),
+            # transforms.RandomHorizontalFlip(),
+            transforms.ColorJitter(
+                brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05
+            ),
+            transforms.RandomResizedCrop(224, scale=(0.9, 1.0)),
+            transforms.ToTensor(),
+        ]
+    )
 
     image_files = os.listdir(folder_path)[:n]
     file_distances_aug = {}

@@ -26,5 +26,3 @@ With the chosen component, the image is cropped and a result is returned:
 <p align="center">
   <img src="images/i4.png" alt="Imagen de muestra">
 </p>
-
-
