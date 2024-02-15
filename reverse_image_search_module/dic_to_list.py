@@ -41,15 +41,13 @@ def extract_embedding(
 if __name__ == "__main__":
     if MULTI_EMBEDDINGS:
         print("Extracting Multi")
-
         extract_embedding(
             input_file=MULTI_INPUT_FILE,
             values_output_file=MULTI_VALES_OUTPUT_FILE,
             keys_output_file=MULTI_KEYS_OUTPUT_FILE,
         )
     else:
-        print("Extracting Multi")
-
+        print("Extracting single")
         extract_embedding(
             input_file=SINGLE_INPUT_FILE,
             values_output_file=SINGLE_VALES_OUTPUT_FILE,

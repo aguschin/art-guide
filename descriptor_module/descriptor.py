@@ -1,5 +1,9 @@
+import os
 from copy import copy
 
+from decouple import config
+
+from .gpt_engine import gpt_generation
 from .manual_engine import manual_generation
 
 INPUT_FORMAT = {
@@ -18,10 +22,9 @@ def describe(feature_dict: dict, engine: str = "manual"):
     input_features.update(feature_dict)
 
     output = ""
-
-    if engine == "manual":
-        output = manual_generation(input_features)
+    if config("OPENAI_API_KEY"):
+        output = gpt_generation(input_features)
     else:
-        assert False, f"engine value {engine} not found"
+        output = manual_generation(input_features)
 
     return {"description": output}
