@@ -1,5 +1,5 @@
-from openai import OpenAI
 from decouple import config
+from openai import OpenAI
 
 
 def generate_prompt(inputd: dict):
@@ -30,15 +30,15 @@ def generate_prompt(inputd: dict):
     # artist_description = inputd.get('Description_artist', None)
     # artist_wiki_description = inputd.get('WikiDescription_artist', None)
 
-    name = inputd.get('art_name', 'a piece of art')
-    author = inputd.get('author_name', 'unknown artist')
-    types = inputd.get('type', '')
-    style = inputd.get('style', '')
+    name = inputd.get("art_name", "a piece of art")
+    author = inputd.get("author_name", "unknown artist")
+    types = inputd.get("type", "")
+    style = inputd.get("style", "")
 
-    date = inputd.get('date', '')
-    period = inputd.get('period', '')
+    date = inputd.get("date", "")
+    period = inputd.get("period", "")
 
-    objects = inputd.get('objects', '')
+    objects = inputd.get("objects", "")
 
     prompt = f"""Title: {name}
     Created by: {author}
@@ -58,8 +58,7 @@ def gpt_generation(inputd: dict):
     prompt = generate_prompt(inputd)
 
     chat_completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}]
+        model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}]
     )
     ouput = chat_completion.choices[0].message.content
 

@@ -1,10 +1,10 @@
-from copy import copy
 import os
+from copy import copy
+
 from decouple import config
 
-from .manual_engine import manual_generation
 from .gpt_engine import gpt_generation
-
+from .manual_engine import manual_generation
 
 INPUT_FORMAT = {
     "author_name": "",

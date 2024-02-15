@@ -17,7 +17,6 @@ data_folder = "data"
 image_filename = "leo.jpg"
 
 
-
 def send_image_to_bot(client, chat_id, image_path):
     try:
         with open(image_path, "rb") as file:
