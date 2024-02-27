@@ -39,7 +39,7 @@ def load_sam():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    sam_ck.to(device=device)
+    # sam_ck.to(device=device)
     sam = SamPredictor(sam_ck)
 
 
