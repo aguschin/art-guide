@@ -1,5 +1,5 @@
 import uvicorn
-# from decouple import config
+from decouple import config
 from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -20,7 +20,8 @@ app.add_middleware(
     expose_headers=['X-Image-Description']
 )
 
-api_port = 8006 #int(config("API_PORT"))
+# todo; this does not work all the times
+api_port = int(config("API_PORT"))
 
 def format_header_value(value):
     value = value.encode('ascii', 'ignore').decode()
