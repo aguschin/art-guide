@@ -39,6 +39,7 @@ def load_sam():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+    # we need a big GPU here
     # sam_ck.to(device=device)
     sam = SamPredictor(sam_ck)
 
