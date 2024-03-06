@@ -68,6 +68,7 @@ def run_all_models(filename, photo_url, verbose=False, k_neibours=1):
 
     return return_body
 
+
 def run_all_models_web(image):
     cropped_image = crop_image(image)
 
