@@ -67,3 +67,18 @@ def run_all_models(filename, photo_url, verbose=False, k_neibours=1):
         )
 
     return return_body
+
+
+def run_all_models_web(image):
+    cropped_image = crop_image(image)
+
+    _, distance, metadata = find_image(cropped_image, n=1)
+
+    if distance[0] < 0.86:
+        return cropped_image, "Sorry, I couldn't find a match for that image."
+
+    description_text = describe(metadata[0])["description"]
+
+    # text_to_audio(description_text, filename=filename)
+
+    return cropped_image, description_text
