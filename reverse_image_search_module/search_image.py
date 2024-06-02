@@ -117,6 +117,7 @@ def find_index_from_image(img, n, times_to_crop=5):
     for x, y, x_end, y_end in gen_multi_cropping(
         img.width, img.height, k=times_to_crop
     ):
+        # import ipdb; ipdb.set_trace() # 36301 Guernica
         croped = img.crop((x, y, x_end, y_end))
 
         vector = img2vec.getVectors(croped)

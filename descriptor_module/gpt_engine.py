@@ -29,8 +29,8 @@ def generate_prompt(inputd: dict):
     # pupils = inputd.get('Pupils_artist', 'Unknown')
     # artist_description = inputd.get('Description_artist', None)
     # artist_wiki_description = inputd.get('WikiDescription_artist', None)
-
-    name = inputd.get("art_name", "a piece of art")
+    print(inputd)
+    name = inputd.get("art_name", inputd.get("title", "a piece of art"))
     author = inputd.get("author_name", "unknown artist")
     types = inputd.get("type", "")
     style = inputd.get("style", "")
@@ -47,7 +47,7 @@ def generate_prompt(inputd: dict):
     Style: {style}.
     Period: {period}
     objects: {objects}
-    Please tell a coherent description that connects the painting's characteristics, the artist's life, and the historical and cultural context of the era."""
+    Please tell a coherent description that connects the painting's characteristics, the artist's life, and the historical and cultural context of the era. Make it sound somewhat informal."""
 
     return prompt
 

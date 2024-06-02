@@ -6,7 +6,7 @@ from services import run_all_models
 
 app = FastAPI()
 
-verbose = bool(config("DEBUG"))
+verbose = config("DEBUG") == "True"
 k_nearest = int(config("DEBUG_KNUMBER"))
 api_port = int(config("API_PORT"))
 

@@ -1,6 +1,5 @@
 import json
 
-# plt
 import numpy as np
 import requests
 from PIL import Image
@@ -27,11 +26,9 @@ def run_all_models(filename, photo_url, verbose=False, k_neibours=1):
     _, distance, metadata = find_image(cropped_image, n=k_neibours)
 
     # save some steps to debug
-    if verbose:
-        image_filename = "cache/cropped_" + get_image_name_from_url(photo_url)
-
-        pil_img = Image.fromarray((cropped_image).astype(np.uint8))
-        pil_img.save(image_filename)
+    image_filename = "cache/cropped_" + get_image_name_from_url(photo_url)
+    pil_img = Image.fromarray((cropped_image).astype(np.uint8))
+    pil_img.save(image_filename)
 
     if distance[0] < 0.8:
         return_body = {"error": "Sorry, I couldn't find a match for that image."}
@@ -57,13 +54,12 @@ def run_all_models(filename, photo_url, verbose=False, k_neibours=1):
 
     return_body = {"audio_filename": filename, "error": None}
 
-    if verbose:
-        return_body.update(
-            {
-                "cropped_img": image_filename,
-                "distance": json.dumps(distance, indent=2),
-                "metadata": json.dumps(metadata, indent=2),
-            }
-        )
+    return_body.update(
+        {
+            "cropped_img": image_filename,
+            "distance": json.dumps(distance, indent=2),
+            "metadata": json.dumps(metadata, indent=2),
+        }
+    )
 
     return return_body
