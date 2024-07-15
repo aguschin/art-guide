@@ -1,5 +1,6 @@
 [core]
-    remote = myremote
+    remote = s3
     autostage = true
-['remote "myremote"']
-    url = ssh://root@95.143.191.156/storage
+['remote "s3"']
+    url = s3://art-guide
+    endpointurl = https://s3.ru-1.storage.selcloud.ru
